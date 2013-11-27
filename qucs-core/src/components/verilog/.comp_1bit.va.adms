@@ -1,0 +1,140 @@
+# 1 "./comp_1bit.va"
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 13 "./comp_1bit.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 14 "./comp_1bit.va"
+module comp_1bit (X, Y, L, G, E); 
+ inout X, Y, L, G, E;
+ electrical X, Y, L, G, E;
+ electrical Ln1, Ln2, Gn1, Gn2, En1, En2;
+
+
+ parameter real TR=6 from [1.0:20.0]  (*info="transfer function high scaling factor"*);
+ parameter real Delay = 1e-9 from [0: inf]  (*info="output delay" unit="s"*);
+
+ real Rd, Cd, mL, mG, mE;
+
+analog begin
+@(initial_model)
+  begin
+    Rd = 1e3;
+    Cd= Delay*1.43/Rd;
+  end
+mE = 1 - ( V(X)*(1-V(Y))+(1-V(X))*V(Y) ) ;
+mG = V(X)*(1-V(Y));
+mL = (1 - V(X))*V(Y);
+
+I(En1) <+ -0.5*(1+tanh(TR*(mE-0.5)));
+I(En1) <+ V(En1);
+I(En1, En2) <+ V(En1,En2)/Rd;
+I(En2) <+ ddt(Cd*V(En2));
+I(E)  <+ -V(En2);
+I(E) <+ V(E);
+
+I(Gn1) <+ -0.5*(1+tanh(TR*(mG-0.5)));
+I(Gn1) <+ V(Gn1);
+I(Gn1, Gn2) <+ V(Gn1,Gn2)/Rd;
+I(Gn2) <+ ddt(Cd*V(Gn2));
+I(G)  <+ -V(Gn2);
+I(G) <+ V(G);
+
+I(Ln1) <+ -0.5*(1+tanh(TR*(mL-0.5)));
+I(Ln1) <+ V(Ln1);
+I(Ln1, Ln2) <+ V(Ln1,Ln2)/Rd;
+I(Ln2) <+ ddt(Cd*V(Ln2));
+I(L)  <+ -V(Ln2);
+I(L) <+ V(L);
+
+end
+endmodule

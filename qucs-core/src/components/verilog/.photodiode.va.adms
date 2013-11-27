@@ -1,0 +1,190 @@
+# 1 "./photodiode.va"
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 13 "./photodiode.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 14 "./photodiode.va"
+module photodiode (Anode, Cathode, Light); 
+ inout Anode, Cathode, Light;
+ electrical Anode, Cathode, Light;
+ electrical n1;
+
+
+ parameter real N=1.35 from [1e-6:inf]             (*info="photodiode emission coefficient"*);
+ parameter real Rseries=1e-3 from [1e-6:inf]       (*info="series lead resistance" unit = "Ohm"*);
+ parameter real Is=0.34e-12 from [1e-20:inf]       (*info="diode dark current" unit="A" *);
+ parameter real Bv=60 from [1e-6:inf]              (*info="reverse breakdown voltage" unit="V"*);
+ parameter real Ibv=1e-3 from [1e-6:inf]           (*info="current at reverse breakdown voltage" unit="A"*);
+ parameter real Vj=0.7 from [1e-6:inf]             (*info="junction potential" unit="V"*);
+ parameter real Cj0=60e-12 from [0:inf]            (*info="zero-bias junction capacitance" unit="F"*);
+ parameter real M=0.5 from [1e-6:inf]              (*info="grading coefficient"*);
+ parameter real Area=1.0 from [1.0:inf]            (*info="diode relative area"*);
+ parameter real Tnom=26.85 from [-273:inf]         (*info="parameter measurement temperature" unit="Celsius"*);
+ parameter real Fc=0.5 from [1e-6:inf]             (*info="forward-bias depletion capacitance coefficient"*);
+ parameter real Tt=10e-9 from [1e-20:inf]          (*info="transit time" unit="s" *);
+ parameter real Xti=3.0 from [1e-6:inf]            (*info="saturation current temperature exponent"*);
+ parameter real Eg= 1.16 from [1e-6:inf]           (*info="energy gap" unit="eV"*);
+ parameter real Responsivity=0.5 from [1e-6:inf]   (*info="responsivity" unit="A/W"*);
+ parameter real Rsh=5e8 from [1e-6:inf]            (*info="shunt resistance" unit="Ohm"*);
+ parameter real QEpercent=80 from [0:100]          (*info="quantum efficiency" unit="%"*);
+ parameter real Lambda=900 from [100:2000]         (*info="light wavelength" unit="nm"*);
+ parameter integer LEVEL=1 from [1:2]              (*info="responsivity calculator selector"*);
+ parameter real Kf=1e-12 from [0:inf]              (*info="flicker noise coefficient"*);
+ parameter real Af=1.0 from [0:inf]                (*info="flicker noise exponent"*);
+ parameter real Ffe=1.0 from [0:inf]               (*info="flicker noise frequency exponent"*);
+
+real A, B, T1, T2, F1, F2, F3, Rseries_Area, Eg_T1, Eg_T2, Vt_T2, Vj_T2, Cj0_T2, Is_T2, GMIN;
+real I1, I2, I3, I4, I5, Id, V1, Q1, Q2, fourkt, TwoQ, Res1, Res2, Res, Vt, I_flicker;
+real con1, con2, con3, con4, con5, con6;
+
+branch (Anode, n1) b6;
+branch (n1, Cathode) b1;
+
+analog begin
+
+@(initial_step)
+ begin
+   Rseries_Area=(Rseries+1e-10)/Area;
+   A=7.02e-4;
+   B=1108.0;
+   T1=Tnom+273.15;
+   T2=$temperature;
+   Vt= 1.3806503e-23*300.0/ 1.602176462e-19;
+   Vt_T2= 1.3806503e-23*T2/ 1.602176462e-19;
+   F1=(Vj/(1-M))*(1-pow((1-Fc),(1-M)));
+   F2=pow((1-Fc), (1+M));
+   F3=1-Fc*(1+M);
+   Eg_T1=Eg-A*T1*T1/(B+T1);
+   Eg_T2=Eg-A*T2*T2/(B+T2);
+   Vj_T2=(T2/T1)*Vj-2*$vt*ln(pow((T2/T1),1.5))-((T2/T1)*Eg_T1-Eg_T2);
+   GMIN=1e-12;
+   Cj0_T2=Cj0*(1+M*(400e-6*(T2-T1)-(Vj_T2-Vj)/Vj));
+   Is_T2=Is*pow( (T2/T1), (Xti/N))*limexp(-(Eg_T1)/$vt*(1-T2/T1));
+   Res1=(QEpercent != 0) ? QEpercent*Lambda/1.2398e5:Responsivity;
+   Res2=QEpercent*Lambda/1.2938e5;
+   Res=(LEVEL==1) ? Res1 : Res2;
+   con1=-5.0*N*Vt;
+   con2=Area*Is_T2;
+   con3=Area*Cj0_T2;
+   con4=Fc*Vj;
+   con5=Fc*Vj_T2;
+   con6=Bv/Vt_T2;
+ end;
+
+V1=V(b1);
+I1=(V1 > con1) ? con2*(limexp(V1/(N*Vt_T2))-1.0)+GMIN*V1: 0;
+I2=(V1 <=  con1) ? -con2+GMIN*V1 :0;
+I3=(V1 == -Bv)?-Ibv: 0;
+I4=(V1<-Bv)?-con2*(limexp(-(Bv+V1)/Vt_T2)-1.0+con6):0;
+Q1=(V1<con4)  ? Tt*I1 + con3*(Vj_T2/(1-M))*(1-pow((1-V1/Vj_T2),(1-M))):0;
+Q2=(V1>=con4) ? Tt*I1 + con3*(F1+(1/F2)*(F3*(V1-con5)+(M/(2.0*Vj_T2))*(V1*V1-con5*con5))):0;
+I5=V(Light)*Res;
+Id=I1+I2+I3+I4;
+I(b1) <+ -I5;
+I(b1) <+ V(b1)/Rsh;
+I(b6)<+V(b6)/Rseries_Area;
+I(b1)<+Id;
+I(b1)<+ddt(Q1+Q2);
+I(Light)<+V(Light)/1e10;
+
+fourkt=4.0* 1.3806503e-23*$temperature;
+TwoQ=2.0* 1.602176462e-19;
+I_flicker=pow(Id, Af);
+I(b6)<+white_noise(fourkt/Rseries_Area, "thermal");
+I(b1)<+white_noise(fourkt/Rsh, "thermal");
+I(b1)<+white_noise(TwoQ*Id, "shot");
+I(b1)<+flicker_noise(Kf*I_flicker, Ffe, "flicker");
+I(b1)<+white_noise(TwoQ*I5, "shot");
+
+end
+endmodule

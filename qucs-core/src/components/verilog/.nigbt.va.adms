@@ -1,0 +1,463 @@
+# 1 "./nigbt.va"
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 15 "./nigbt.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 16 "./nigbt.va"
+
+
+
+
+
+# 26 "./nigbt.va"
+
+
+
+
+
+
+
+
+
+module nigbt (C, G, E);
+
+  inout C, G, E;
+  
+  electrical C, G, E;
+  
+  electrical e, b;
+  
+  electrical var_Ql, var_Mucinv, var_Nsat, var_dVecdt;
+
+
+
+  
+  parameter real Agd = 5.0e-6 from (0 : inf]
+     (*info="gate-drain overlap area" unit="m**2"*);
+  parameter real Area = 1.0e-5 from (0 : inf]
+     (*info="area of the device" unit="m**2"*);
+  parameter real Kp = 0.38 from [0 : inf]
+     (*info="MOS transconductance" unit="A/V**2"*); 
+  parameter real Tau = 7.1e-6 from [0 : inf]
+     (*info="ambipolar recombination lifetime" unit="s"*);
+  parameter real Wb = 9.0e-5 from (0 : inf]
+     (*info="metallurgical base width" unit="m"*); 
+
+  
+  parameter real BVf = 1.0 from (0 : inf]
+     (*info="avalanche uniformity factor"*);
+  parameter real BVn = 4.0 from (0 : inf]
+     (*info="avalanche multiplication exponent"*);
+  parameter real Cgs = 1.24e-8 from [0 : inf]
+     (*info="gate-source capacitance per unit area" unit="F/cm**2"*);
+  parameter real Coxd = 3.5e-8 from [0 : inf]
+     (*info="gate-drain oxide capacitance per unit area" unit="F/cm**2"*);
+  parameter real Jsne = 6.5e-13 from [0 : inf]
+     (*info="emitter saturation current density" unit="A/cm**2"*);
+  parameter real Kf = 1.0 from [0 : inf]
+     (*info="triode region factor"*);
+  parameter real Mun = 1.5e-3 from [0 : inf]
+     (*info="electron mobility" unit="cm**2/Vs"*);
+  parameter real Mup = 4.5e-2 from [0 : inf]
+     (*info="hole mobility" unit="cm**2/Vs"*);
+  parameter real Nb = 2.0e14 from [0 : inf]
+     (*info="base doping" unit="1/cm**3"*);
+  parameter real Theta = 0.02 from [0 : inf]
+     (*info="transverse field factor" unit="1/V"*);
+  parameter real Vt = 4.7 from [0 : inf]
+     (*info="threshold voltage" unit="V"*);
+  parameter real Vtd = 1.0e-3 from [0 :inf]
+     (*info="gate-drain overlap depletion threshold" unit="V"*);
+  parameter real Tnom = 26.85 from [- 273.15 : inf]
+   (*info="parameter measurement temperature" unit="Celsius"*);
+
+  
+  real Nl, Nh, Wl, Wh;
+  real Imos, It, Icss, Imult, Igen, Ic, Ibss, Isne;
+  real Rb, B, Dp, Dn, L, W, M;
+  real Vds, Vgs, Vce, Vec, Veb, Vdg, Vth, Vbc, Vnrt, Vebj, Vebd, Vebq, Vae;
+  real Nsat, Nscl, Neff;
+  real Wdsj, Wdgj, Wbcj, Wgdj;
+  real Dc, Ql, Qgs, Qgd, Qds, Qcer, Qmult, Qb, Qbi;
+  real Ccer, Cbcj, Cgdj, Cdsj, Cgd;
+  real Mucinv, Munc, Mupc, Mueff, BVcbo, Plo, Deltap;
+  real WL, WL2, Tanh, A, Ads, Tj, To;
+  real Ni, Vpsat, Vnsat, Alpha1, Alpha2, KpT;
+  real dVecdt;
+
+  
+  real iQl, iMucinv, iNsat;
+
+
+analog begin
+
+@(initial_model)
+begin
+
+  Tj = $temperature;
+  To = Tnom+ 273.15;
+  A = Area;
+  Ads = A-Agd;
+  B = Mun/Mup;   
+  
+  Nh = 2.4e17;   
+  Nl = Nb;       
+  
+  Ni = 1.05e10;
+  Ni = 3.88e16*pow(Tj,1.5)/exp(7000.0/Tj);
+
+  Vnsat = 10.0e6*pow(300/Tj,0.87);
+  Vpsat = 8.37e6*pow(300/Tj,0.52);
+  Alpha1 = 1.04e21*pow(Tj/300,1.5);
+  Alpha2 = 7.45e13*pow(Tj/300,2.0);
+
+  
+  Isne = Jsne*A * pow(Tj/To,Jsne*A)/exp(14000*(1/Tj-1/To));
+
+  
+  KpT = Kp*pow(To/Tj,Kp);
+
+  
+  Wl = Wb;
+  
+  Dp = Mup*$vt(Tj);
+  
+  Dn = Mun*$vt(Tj);
+  
+end
+
+
+
+
+
+Vdg = V(b,G);
+Vgs = V(G,E);
+Vds = V(b,E);
+Veb = V(e,b);
+Vae = V(C,e);
+Vec = V(e,E);
+
+Vbc = Vds;
+Vth = Vgs-Vt;
+
+
+Ql = V(var_Ql);
+Nsat= V(var_Nsat);
+Mucinv = V(var_Mucinv);
+dVecdt = V(var_dVecdt);
+
+
+Nscl = max(Nl + Nsat,  1e-20);
+
+
+if (Vdg > -Vtd)
+  Wgdj = min(sqrt(2* 1.03594e-10*(Vdg+Vtd)/ 1.602176462e-19/Nscl),Wl);
+else
+  Wgdj = 0;
+
+
+if (Vds > -0.6)
+  Wdsj = min(sqrt(2* 1.03594e-10*(Vds+0.6)/ 1.602176462e-19/Nscl),Wl);
+else
+  Wdsj = 0;
+
+
+if (Vbc > -0.6)
+  Wbcj = min(sqrt(2* 1.03594e-10*(Vbc+0.6)/ 1.602176462e-19/Nscl),Wl);
+else
+  Wbcj = 0;
+
+
+W = Wl - Wbcj;
+
+
+Qgs = Cgs * Vgs;
+
+
+if (Vds > -0.6)
+  Qds = Ads*sqrt(2* 1.03594e-10*(Vds+0.6)* 1.602176462e-19*Nscl);
+else
+  Qds = 0;
+
+
+Qb =  1.602176462e-19*A*W*Nscl;
+
+
+Qbi = A*sqrt(2* 1.03594e-10* 1.602176462e-19*Nl*0.6);
+
+
+Cbcj = A* 1.03594e-10/(Wbcj+ 1e-20);
+
+
+
+  Ccer = Ql*Cbcj/3/(Qb+ 1e-20);
+
+
+
+
+Cdsj = Ads* 1.03594e-10/(Wdsj+ 1e-20);
+
+
+Cgdj = Agd* 1.03594e-10/(Wgdj+ 1e-20);
+
+
+if (Vds < Vgs - Vtd)
+  Cgd = Coxd;
+else
+  Cgd = Coxd*Cgdj/(Coxd+Cgdj);
+
+Munc = 1/(1/Mun+Mucinv);
+Mupc = 1/(1/Mup+Mucinv);
+if (Ql > 0)
+  Mueff = Munc+Mupc*Ql/(Ql + Qb);
+else
+  Mueff = Munc;
+
+
+Dc = 2*$vt(Tj)*Munc*Mupc/(Munc+Mupc);
+
+
+L = sqrt(Dc*Tau);
+
+
+WL = W/L;
+WL2 = WL/2;
+Tanh = tanh(WL2);
+
+
+if (WL > 0)
+  Plo = Ql/( 1.602176462e-19*A*L*Tanh);
+else
+  Plo = 0;
+
+
+if (WL > 0)
+  Deltap = Plo*sinh(WL2)/sinh(WL);
+else
+  Deltap = 0;
+
+if (WL > 0)
+begin
+  real Nl2, Plo2, Con2, Con3, Con4;
+
+  Nl2  = Nl*Nl;
+  Plo2 = Plo*Plo;
+  Con2 = 1/sinh(WL);
+  Con3 = Plo2*Con2*Con2;
+  Con4 = sqrt(Nl2+Con3)*Tanh / (Nl+Plo*Con2*Tanh);
+
+  
+  Neff = WL2*sqrt(Nl2+Con3) / atanh(Con4);
+end
+else
+  Neff = 0;
+
+
+if (Ql < 0)
+  Rb = W/( 1.602176462e-19*Munc*A*Nl);
+else
+  Rb = W/( 1.602176462e-19*Mueff*A*Neff);
+
+
+Vebj = 0.6-(Ql-Qbi)*(Ql-Qbi)/(2* 1.602176462e-19*Nl* 1.03594e-10*A*A);
+
+
+Vebd = $vt(Tj)*ln((Plo/Ni/Ni+1/Nl)*(Nl+Plo))-Dc/Munc*ln((Plo+Nl)/Nl);
+
+
+if (Ql < 0)
+  Vebq = Vebj;
+else if (Ql >= Qbi)
+  Vebq = Vebd;
+else
+  Vebq = min(Vebj,Vebd);
+
+
+
+
+BVcbo = BVf*5.34e13/pow(Nscl,0.75);
+
+
+Vnrt = Vbc;
+M = 1/(1-pow(Vnrt/BVcbo, BVn));
+
+
+if (Rb > 0)
+  It = Vae/Rb;
+else
+  It = Vae/1e-6;
+
+
+if (Veb > 0)
+  Icss = (1/(1+B))*It + (B/(1+B)) * (4*Dp/(W*W+ 1e-20))*Ql;
+else
+  Icss = 0;
+
+
+Ic = Icss + Ccer*dVecdt;
+
+
+if (Veb > 0)
+begin
+  if (Qb > 0)
+    Ibss = Ql/Tau + Ql*Ql/Qb/Qb * 4*Nscl*Nscl/Ni/Ni * Isne;
+  else
+    Ibss = Ql/Tau;
+end
+else
+  Ibss = 0;
+
+
+if (Vgs < Vt)
+  Imos = 0;
+else if (Vds > Vth/Kf)
+  Imos = KpT*Vth*Vth / 2/(1+Theta*Vth);
+else
+  Imos = Kf*KpT*(Vth*Vds - Kf*Vds*Vds/2) / (1+Theta*Vth);
+
+
+if (Vbc > 0)
+  Igen =  1.602176462e-19*Ni*A*sqrt(2* 1.03594e-10*Vbc/ 1.602176462e-19/Nscl)/Tau;
+else
+  Igen = 0;
+
+
+Imult = (M-1)*(Imos+Ic) + M*Igen;
+
+Qgd = Cgd*Vdg;
+Qcer = Ccer*Vec;
+Qmult = (M-1)*Qcer;
+
+
+if (Deltap > 0)
+  iMucinv = (Deltap * ln(1+Alpha2/pow(Deltap, 2.0/3.0)))/Alpha1;
+else
+  iMucinv = 0;
+
+
+iQl =  1.602176462e-19*A*W*Plo/2;
+
+
+iNsat = Ic/( 1.602176462e-19*A*Vpsat)-Imos/( 1.602176462e-19*A*Vnsat);
+
+
+
+
+
+I(G, E) <+ Vgs* 1e-12;
+I(G, E) <+ ddt(Qgs);
+I(b, G) <+ Vdg* 1e-12;
+I(b, G) <+ ddt(Qgd);
+I(b, E) <+ Imos + Imult + Vds* 1e-12;
+I(b, E) <+ ddt(Qds);
+I(b, E)	<+ ddt(Qmult);
+I(e, E) <+ Icss + Vec* 1e-12;
+I(e, E) <+ ddt(Qcer);
+I(e, b) <+ Ibss + Veb* 1e-12;
+I(e, b) <+ ddt(iQl);
+I(C, e) <+ It;
+
+
+
+
+
+I(var_Ql)	<+ Ql - iQl;
+I(var_Mucinv)	<+ Mucinv - iMucinv;
+I(var_Nsat)	<+ Nsat - iNsat;
+I(var_dVecdt)	<+ dVecdt;
+I(var_dVecdt)	<+ -ddt(Vec);
+
+end
+endmodule

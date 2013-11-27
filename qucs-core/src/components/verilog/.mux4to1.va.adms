@@ -1,0 +1,124 @@
+# 1 "./mux4to1.va"
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 13 "./mux4to1.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 14 "./mux4to1.va"
+module mux4to1 (EN, A, B, D0, D1,D2, D3, Y); 
+ inout EN, A, B, D0, D1, D2, D3, Y;
+ electrical EN, A, B, D0, D1, D2, D3, Y;
+ electrical n1, n2;
+
+
+ parameter real TR=6 from [1.0:20.0]  (*info="transfer function high scaling factor"*);
+ parameter real Delay = 1e-9 from [0: inf]  (*info="output delay" unit="s"*);
+
+ real Rd, Ccc, In1, VAI, VBI;
+
+analog begin
+@(initial_model)
+  begin
+    Rd = 1e3;
+    Ccc= Delay*1.43/Rd;
+  end
+VAI = (1-V(A));
+VBI = (1-V(B));
+In1 = (1-V(EN))*(V(D3)*V(B)*V(A)+V(D2)*V(B)*VAI+V(D1)*VBI*V(A)+V(D0)*VBI*VAI);
+I(n1) <+ -0.5*(1+tanh(TR*(In1-0.5)));
+I(n1) <+ V(n1);
+I(n1, n2) <+ V(n1,n2)/Rd;
+I(n2) <+ ddt(Ccc*V(n2));
+I(Y)  <+ -V(n2);
+I(Y) <+ V(Y);
+end
+endmodule

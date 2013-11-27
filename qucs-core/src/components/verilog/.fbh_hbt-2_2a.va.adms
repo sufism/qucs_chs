@@ -1,0 +1,782 @@
+# 1 "./fbh_hbt-2_2a.va"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 25 "./fbh_hbt-2_2a.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 26 "./fbh_hbt-2_2a.va"
+
+
+
+
+
+
+
+
+
+
+
+
+module HBT_X(c,b,e,t);  
+
+
+    inout e,b,c,t;
+    electrical e,b,c;
+    thermal t;
+    
+    
+    electrical ei, bi, bii, ci, ex, exx, cx, ni, nii, niix, niii, niiix, niv, nivx;
+    thermal ti;
+
+    
+    parameter integer Mode = 1  from [0:4];             
+    parameter integer Noise = 1  from [0:4];            
+    parameter integer Debug = 0  from [0:inf);          
+    parameter integer DebugPlus = 0  from [0:inf);      
+
+    parameter real Temp = 25.0    from [-273.15:inf);   
+    parameter real Rth = 0.1    from [0.0:inf);         
+    parameter real Cth = 700n     from [0.0:inf);       
+
+    parameter integer N = 1      from (0:inf);          
+    parameter real L = 30u     from (0.0:inf);          
+    parameter real W = 3u     from (0.0:inf);           
+
+    parameter real Jsf = 20e-24  from [0.0:inf);        
+    parameter real nf = 1.0    from [0.0:inf);          
+    parameter real Vg = 1.3    from [-2.0:inf);         
+
+    parameter real Jse = 0.0    from [0.0:inf);         
+    parameter real ne = 0.0    from [0.0:inf);          
+    parameter real Rbxx = 1e6    from (0.0:inf);        
+    parameter real Vgb = 0.0    from [0.0:inf);         
+
+    parameter real Jsee = 0.0    from [0.0:inf);        
+    parameter real nee = 0.0    from [0.0:inf);         
+    parameter real Rbbxx= 1e6    from (0.0:inf);        
+    parameter real Vgbb = 0.0    from [0.0:inf);        
+
+    parameter real Jsr = 20e-18  from [0.0:inf);        
+    parameter real nr = 1.0    from [0.0:inf);          
+    parameter real Vgr = 0.0    from [0.0:inf);         
+    parameter real XCjc = 0.5    from [0.0:1.0);        
+
+    parameter real Jsc = 0.0    from [0.0:inf);         
+    parameter real nc = 0.0    from [0.0:inf);          
+    parameter real Rcxx = 1e6    from (0.0:inf);        
+    parameter real Vgc = 0.0    from [0.0:inf);         
+
+    parameter real Bf = 100.0    from [0.0:inf);        
+    parameter real kBeta= 0.0    from [0.0:inf);        
+    parameter real Br = 1.0    from [0.0:inf);          
+    
+    parameter real VAF = 0.0    from [0.0:inf);         
+    parameter real VAR = 0.0    from [0.0:inf);         
+
+    parameter real IKF = 0.0    from [0.0:inf);         
+    parameter real IKR = 0.0    from [0.0:inf);         
+
+    parameter real Mc = 0.0    from [0.0:inf);          
+    parameter real BVceo= 0.0    from [0.0:inf);        
+    parameter real kc = 0.0    from [0.0:inf);          
+
+    parameter real BVebo= 0.0    from [0.0:inf);        
+
+    parameter real Tr = 1f     from [0.0:inf);          
+    parameter real Trx = 1f     from [0.0:inf);         
+    parameter real Tf = 1p     from [0.0:inf);          
+    parameter real Tft = 0.0    from [0.0:inf);         
+    parameter real Thcs = 0.0    from [0.0:inf);        
+    parameter real Ahc = 0.0    from [0.0:inf);         
+
+    parameter real Cje = 1f     from [0.0:inf);         
+    parameter real mje = 0.5    from [0.0:1);           
+    parameter real Vje = 1.3    from [0.0:inf);         
+
+    parameter real Cjc = 1f     from [0.0:inf);         
+    parameter real mjc = 0.5    from [0.0:inf);         
+    parameter real Vjc = 1.3    from [0.0:inf);         
+    parameter real kjc = 1.0    from (-inf:inf);        
+    parameter real Cmin = 0.1f   from [0.0:inf);        
+
+    parameter real J0   = 1e-3   from [0.0:inf);        
+    parameter real XJ0  = 1.0    from [0.0:1.0];        
+    parameter real Rci0 = 1e-3   from (0.0:inf);        
+    parameter real Jk   = 4e-4   from [0.0:inf);        
+    parameter real RJk  = 1e-3   from [0.0:inf);        
+    parameter real Vces = 1e-3   from [0.0:inf);        
+
+    parameter real Rc = 1.0    from (0.0:inf);          
+    parameter real Re = 1.0    from (0.0:inf);          
+    parameter real Rb = 1.0    from (0.0:inf);          
+    parameter real Rb2 = 1.0    from (0.0:inf);         
+
+    parameter real Lc = 0.0    from [0.0:inf);          
+    parameter real Le = 0.0    from [0.0:inf);          
+    parameter real Lb = 0.0    from [0.0:inf);          
+
+    parameter real Cq = 0.0    from [0.0:inf);          
+    parameter real Cpb = 0.0    from [0.0:inf);         
+    parameter real Cpc = 0.0    from [0.0:inf);         
+
+    parameter real Kfb = 0.0    from [0.0:inf);         
+    parameter real Afb = 0.0    from [0.0:inf);         
+    parameter real Ffeb = 0.0    from [0.0:inf);        
+    parameter real Kb = 0.0    from [0.0:inf);          
+    parameter real Ab = 0.0    from [0.0:inf);          
+    parameter real Fb = 0.0    from (0.0:inf);          
+    parameter real Kfe = 0.0    from [0.0:inf);         
+    parameter real Afe = 0.0    from [0.0:inf);         
+    parameter real Ffee = 0.0    from [0.0:inf);        
+    
+    parameter real Tnom = 20.0    from [-273.15:inf);   
+
+    
+    
+    
+    analog function real exp_soft;
+        input x;
+        real x, maxexp, maxarg;
+        begin
+
+            maxexp = 1.0e25; 
+            maxarg = ln(maxexp); 
+            if (x < maxarg) begin 
+                exp_soft = exp(x); 
+            end 
+            else begin 
+                exp_soft = (x+1.0-maxarg)*(maxexp); 
+            end 
+        end
+    endfunction
+
+     
+     analog function real Vt;
+        input U, Ud;
+        real  U, Ud, Vch, VF;
+        begin
+           Vch = 0.1 * Ud;
+           VF  = 0.9 * Ud; 
+
+           if (U < VF)
+                Vt = U  - Vch * ln(1.0 + exp((U-VF)/Vch));
+           else
+                Vt = VF - Vch * ln(1.0 + exp((VF-U)/Vch));
+        end
+     endfunction 
+
+    
+    analog function real diode;
+        input U, Is, Ug, N, AREA, TJ, TNOM; 
+        real  U, Is, Ug, N, AREA, TJ, TNOM, VTH0, VTHJ, VTHNOM, maxi, Tmax, TJM, KDURCHQ, lnIs; 
+        begin
+            
+            VTH0=$vt(20.0+273.15);
+            VTHNOM=$vt(TNOM+273.15);
+            KDURCHQ = 0.861708692e-4;
+            lnIs=ln(Is*AREA);
+
+            maxi=ln(1e6);            
+            if ((maxi<(Ug/VTHNOM)) && (U < 0.0))
+               begin
+                  Tmax= Ug*VTHNOM/((Ug - maxi*VTHNOM)*KDURCHQ) - 273.15;
+                  TJM=Vt(TJ,Tmax);
+               end
+            else
+               begin
+                  TJM=TJ; 
+               end
+            VTHJ = $vt(TJM+273.15);
+            
+            if (Ug > 0.0) begin
+                 diode = exp_soft(U/(N*VTHJ) + Ug/VTHNOM - Ug/VTHJ + lnIs) - exp_soft(Ug/VTHNOM - Ug/VTHJ + lnIs);
+            end 
+            else begin
+                diode = exp_soft(U/(N*(VTH0)) + lnIs) - Is*AREA;
+            end
+        end
+    endfunction
+
+    
+    analog function real MM;
+        input VBCI, VCBO, MC, VCBLIN, BF, KC;
+        real  VBCI, VCBO, MC, VCBLIN, BF, KC;
+        real FBD, vcbi;
+        begin
+
+            if((KC > 0.0) && (MC > 0.0) && (VCBO > 0.0)) begin 
+                vcbi = VBCI; 
+                FBD = VCBLIN/VCBO; 
+                if(VBCI > 0.0) 
+                    MM = 1.0; 
+                else if(VBCI > (-VCBLIN)) begin 
+                    if (MC==1) 
+                        MM = 1.0/(1.0 - (vcbi/(-VCBO))); 
+                    else 
+                        MM = 1.0/(1.0 - pow(vcbi/(-VCBO),MC)); 
+                end
+                else if(VBCI <= (-VCBLIN)) begin 
+                    if (MC==1) begin
+                        MM = 1.0/(1.0 - FBD) - 1.0/VCBO * 
+                            1.0/pow(1.0 - FBD,2.0) * (vcbi + FBD*VCBO); 
+                    end
+                    else begin
+                        MM = 1.0/(1.0 - pow(FBD,MC)) - MC/VCBO * 
+                            pow(FBD,MC-1.0)/pow(1.0 - 
+                            pow(FBD,MC),2.0) * (vcbi + FBD*VCBO); 
+                    end
+                end 
+            end
+            else 
+                MM = 1.0; 
+        end
+    endfunction
+
+
+     
+     analog function real charge;
+         input U, C0, Ud, m, Area;
+         real U, C0, Ud, m, Area, Vj, Vjo, VF;
+         begin
+            Vj  = Vt(U,Ud);
+            Vjo = Vt(0.0,Ud);
+            VF  = 0.9 * Ud; 
+
+            if(m==1.0) begin
+                charge = Area*(C0)*
+                       ( Ud*( ln(1.0 - Vjo/Ud) -
+                              ln(1.0 - Vj/Ud)
+                            ) +
+                         1.0/(1.0 - VF/Ud) * (U - Vj + Vjo));
+             end
+             else begin
+              charge = Area*(C0)*
+                     ( (Ud/(1.0-m))*( pow(1.0 - Vjo/Ud , 1.0-m) -
+                                      pow(1.0 - Vj/Ud , 1.0-m)
+                                    ) +
+                       pow(1.0 - VF/Ud,-m) * (U - Vj + Vjo) -
+                       Ud*(1.0/(1.0-m)));
+             end
+          end
+      endfunction
+
+
+     
+     analog function real Vceff;
+         input U, VCES;
+         real  U, VCES, Vth0;
+         begin
+            Vth0 = 0.025;
+            
+            if (U < VCES)
+               Vceff = Vth0  + Vth0 * ln(1.0 + exp((U-VCES)/Vth0 - 1.0));
+            else
+               Vceff = (U-VCES) + Vth0 * ln(1.0 + exp(1.0-(U-VCES)/Vth0));
+         end
+     endfunction
+
+    
+     analog function real ICK;
+        input U, RCI0, VLIM, InvVPT, VCES;
+        real  U, RCI0, VLIM, InvVPT, VCES, VC, x;
+        begin
+           VC  = Vceff(U,VCES);
+           x   = (VC - VLIM)*InvVPT;
+           ICK = VC/RCI0 * (1.0/sqrt(1.0 + (VC/VLIM)*(VC/VLIM)))*(1.0 + (x + sqrt((x*x)+0.001))/2.0);
+        end
+     endfunction
+
+
+
+    
+    real vbcx, vbci, vbei, vxe, vxxe, vxc, vcei;
+    real Ic0, Ic1, Ic1r, Ib2, Ibx, 
+         Ib0, Ibdx, Icdx, Ibdxx, Ib1, Ic0a, Ic1ra,
+         Ipdiss;
+    real qb2;
+    real qb2med, qb1, xtff, qbe, qbtr, 
+         qbtra, qbtf;
+    real EdBeta, mm;
+    real epsi, Vbclin;
+    real Texi, Tex, Tj, TjK, Area;
+    real RCIO, AHC, Ih, Wh, Vlim, InvVpt, q1, q2, qb, I00;
+    real xix;
+    real FOUR_K,TWO_Q, Iniix, Iniiix, Inivx;
+   
+ 
+
+
+    
+    analog begin
+
+        
+        
+        
+        
+        vbcx = V(bi,ci);
+        vbci = V(bii,ci);
+        vbei = V(bii,ei);
+        vxe = V(ex,ei);
+        vxc = V(cx,ci);
+        vxxe = V(exx,ei);
+        vcei = V(ci,ei);
+
+        Texi = Temp(ti);    
+        Tj = Texi + Temp;  
+        TjK = Tj+273.15;   
+        Tex = Tj - Tnom;    
+
+        Area =  L*W*(1.0e12) * N;     
+
+        FOUR_K = 4 * 1.3806226e-23; 
+        TWO_Q  = 2 * 1.6021918e-19; 
+
+        
+        
+        
+        
+
+        Ic0a = diode(vbei,Jsf,Vg,nf,Area,Tj,Tnom);
+        Ic1ra = diode(vbci,XCjc*Jsr,Vgr,nr,Area,Tj,Tnom);
+       
+        
+        if((VAF >0.0) && (VAR >0.0)) begin
+            q1 = (1.0 + (charge(vbei,1.0,Vje,mje,1.0)-charge(0.0,1.0,Vje,mje,1.0))/VAR + 
+                        (charge(vbci,1.0,Vjc,mjc,1.0)-charge(0.0,1.0,Vjc,mjc,1.0))/VAF);
+        end 
+        else if((VAF >0.0) && (VAR == 0.0)) begin
+            q1 = (1.0 + (charge(vbci,1.0,Vjc,mjc,1.0)-charge(0.0,1.0,Vjc,mjc,1.0))/VAF);
+        end 
+        else if((VAF ==0.0) && (VAR > 0.0)) begin
+            q1 = (1.0 + (charge(vbei,1.0,Vje,mje,1.0)-charge(0.0,1.0,Vje,mje,1.0))/VAR);
+        end 
+        else begin
+            q1 = 1.0;
+        end 
+        
+        
+        if((IKF > 0.0) && (IKR > 0.0)) begin
+            q2 = Ic0a/(Area*IKF) + Ic1ra/(Area*IKR);
+        end 
+        else if((IKF > 0.0) && (IKR == 0.0)) begin
+            q2 = Ic0a/(Area*IKF);
+        end 
+        else if((IKF == 0.0) && (IKR > 0.0)) begin
+            q2 = Ic1ra/(Area*IKR);
+        end 
+        else begin
+            q2 = 0.0;
+        end
+        
+        qb = (q1 + sqrt((q1*q1) + 4.0 * q2))/2.0; 
+        
+        Ic0 = Ic0a/qb;
+        Ic1r= Ic1ra/qb;
+        Ic1 = (Ic0 - Ic1r);
+
+        Ib2 = diode(vbci,XCjc*Jsr,Vgr,nr,Area,Tj,Tnom)/(Br);
+        Ibx = diode(vbcx,(1.0-XCjc)*Jsr,Vgr,nr,Area,Tj,Tnom)/(Br);
+   
+        
+        
+        epsi = 1.0e-6;
+        Vbclin =  BVceo * pow(1.0 - epsi , 1/Mc);
+        
+        mm = MM(vbci, BVceo, Mc, Vbclin, Bf, kc);
+
+        if(mm >1.0) begin
+            if(kBeta > 0.0) begin
+                if((Bf - kBeta*Tex) > 1e-6) begin
+                    EdBeta = (1/(Bf - kBeta*Tex) - kc*(mm - 1)) / (kc*(mm - 1) + 1);
+                end
+                else begin
+                    EdBeta = (1e6 - kc*(mm - 1))/(kc*(mm - 1)+1);
+                end
+            end
+            else begin
+                EdBeta = (1/(Bf) - kc*(mm - 1))/(kc*(mm - 1)+1);
+            end
+        end 
+        else begin
+            if(kBeta > 0.0) begin
+                if((Bf - kBeta*Tex) > 1e-6) begin
+                    EdBeta = (1/(Bf - kBeta*Tex));
+                end
+                else begin
+                    EdBeta = (1e6 );
+                end
+            end
+            else begin
+                EdBeta = (1/(Bf) );
+            end
+        end
+          
+        Ib0 = Ic0a * EdBeta;
+
+        
+        if (BVebo>0) begin
+            Ib1 = Ib0 - 
+                diode((-BVebo - vbei), Jsf, 0.0, 1.0, Area, 0.0, 0.0);
+        end else 
+            Ib1 = Ib0;
+
+        
+        if((Jse>0.0) && (ne>0)) 
+            Ibdx = diode(vxe,Jse,Vgb,ne,Area,Tj,Tnom);
+        else 
+            Ibdx = vxe*1e-12;
+
+        if((Jsee>0.0) && (nee>0))
+            Ibdxx = diode(vxxe,Jsee,Vgbb,nee,Area,Tj,Tnom);
+        else 
+            Ibdxx = vxxe*1e-12;
+
+        if((Jsc>0.0) && (nc>0))
+            Icdx = diode(vxc,Jsc,Vgc,nc,Area,Tj,Tnom);
+        else 
+            Icdx = vxc * 1e-12;
+
+        
+        Ipdiss = (Ic1 * (vcei)) + (Ib1 * (vbei)) + (Ib2 * vbci) + (Ibx * vbcx);
+
+        if (Ipdiss < 0.0) 
+            Ipdiss = 0;
+
+        
+        
+        
+
+        
+        
+        I00=(J0*Area);
+     
+        
+        if ((XCjc < 1.0) && (XCjc > 0.0))  begin
+            if ((J0<=0.0) || (Ic0<0.0)) begin
+                
+                qb2med = XCjc * charge(vbci,(Cjc-Cmin),Vjc,mjc,Area) + 
+                    XCjc * Area * Cmin * vbci;
+            end
+            else begin 
+                
+
+                    xix = Ic0/I00;
+
+                    qb2med = XCjc * (1.0 - tanh( xix )) *
+                        (charge(vbci,(Cjc-Cmin),Vjc,mjc,Area) +
+                         (1.0-XJ0) * Area * Cmin*vbci) +
+                         XJ0 * XCjc * Area * Cmin*vbci;
+            end
+        end 
+        else begin
+            
+            if ((J0<0.0) || (Ic0<0.0)) begin  
+                
+                qb2med = charge(vbci,(Cjc-Cmin),Vjc,mjc,Area) +
+                    Area * Cmin*vbci;
+            end
+            else begin
+                
+
+                    xix = Ic0/I00;
+
+                    qb2med =  (1.0 - tanh( xix  )) *
+                        (charge(vbci,(Cjc-Cmin),Vjc,mjc,Area) +
+                        (1.0 - XJ0)*Area * Cmin*vbci) +
+                        XJ0*Area * Cmin*vbci;
+
+            end
+        end
+
+        
+        if ((XCjc < 1.0) && (XCjc > 0.0)) begin
+            qb1 = (1.0-XCjc) * charge(vbcx,(Cjc-Cmin),Vjc,mjc,Area) +
+                (1.0-XCjc) * Area * Cmin* vbcx;
+        end
+        else begin     
+            qb1 = 0.0;
+        end
+   
+           qbtr = Tr * Ic1r;
+           qbtra = Trx * Ibx;
+
+        
+        qb2 = qb2med + qbtr;
+
+        
+
+        if ((Jk > 0.0) && (Rci0 > 0.0)) begin
+           if (RJk > 0.0) begin
+             Vlim   = Jk * Rci0  / (1.0 -  Rci0/RJk);
+             InvVpt = (1.0 -  Rci0/RJk)/(Jk*RJk);
+           end
+           else begin
+              Vlim   = Jk * Rci0 / (1.016);
+              InvVpt = 0.0;
+           end
+        end
+
+        if ((Thcs>0.0) && (Ahc>0.0)  && (Jk>0.0) && (Ic0>0.0)) begin
+            RCIO = Rci0/Area;
+            AHC  = Area*Ahc;
+            if ((Rci0<RJk) || (RJk <= 0.0)) 
+               begin
+                 Ih   = 1.0 - ICK(vcei, RCIO, Vlim, InvVpt, Vces)/Ic0;
+               end
+            else 
+               begin
+                 Ih   = 1.0 - Vceff(vcei,Vces)/(RCIO*Ic0);
+               end
+            Wh   = ((Ih + sqrt((Ih*Ih)+AHC)))/(1.0 + sqrt(1.0+AHC));
+            xtff = Thcs * Ic0 *(Wh*Wh);
+        end
+        else begin
+           xtff = 0;
+        end
+ 
+        
+        qbtf = (Tf + Tft * Tex) * Ic0;
+          
+        
+        qbe = xtff + qbtf + charge(vbei, Cje, Vje, mje,  Area);
+
+        
+        
+        
+
+        
+        I(bi, ci) <+ Ibx;
+        I(bi, ci) <+ ddt(qb1 + qbtra);  
+        I(bii,ci) <+ Ib2;
+        I(bii,ci) <+ ddt(qb2);
+        I(bii,ei) <+ Ib1;
+        I(bii,ei) <+ ddt(qbe);
+        I(ci, ei) <+ Ic1;          
+        
+        I(ex ,ei) <+ Ibdx;  
+        I(exx,ei) <+ Ibdxx;  
+        I(cx ,ci) <+ Icdx;  
+
+        
+        I(bii,ei) <+ white_noise( (TWO_Q *Ib1), "Ib"); 
+        I(ni)     <+ V(ni);
+	I(ni)     <+ white_noise( (TWO_Q *Ic0), "Ic"); 
+        I(bii,ei) <+ V(ni); 
+
+        I(bii,ci) <+ (V(ni));
+
+        
+        I(bii,bi)  <+ V(bii, bi)/(Rb2/N);
+        I(bii,bi)  <+ white_noise( (FOUR_K*TjK)/(Rb2/N), "thermal");
+
+
+
+
+        I(b,bi) <+ V(b,bi)/(Rb/N);
+        I(b,bi) <+ white_noise( (FOUR_K*TjK)/(Rb/N), "thermal")  ;
+
+
+
+        I(e,ei) <+ V(e,ei)/(Re/N);
+        I(e,ei) <+ white_noise( (FOUR_K*TjK)/(Re/N), "thermal")  ;
+
+
+
+        I(c,ci) <+ V(c,ci)/(Rc/N);
+        I(c,ci) <+ white_noise( (FOUR_K*TjK)/(Rc/N), "thermal")  ;
+
+        if((Jse>0.0) && (ne>0)) begin
+           I(ex, bii)  <+ V(ex,  bii)/(Rbxx/N);
+           I(ex, bii)  <+ white_noise( (FOUR_K*TjK)/(Rbxx/N), "thermal"); 
+        end
+        else begin
+           I(ex, bii)  <+ V(ex,  bii)*1e-12; 
+        end
+            
+        if((Jsee>0.0) && (nee>0)) begin
+           I(exx,bii)  <+ V(exx, bii)/(Rbbxx/N);
+           I(exx,bii)  <+ white_noise( (FOUR_K*TjK)/(Rbbxx/N), "thermal");   
+        end
+        else begin
+           I(exx, bii)  <+ V(exx,  bii)*1e-12;  
+        end
+ 
+        if((Jsc>0.0) && (nc>0)) begin
+           I(cx, bii)  <+ V(cx,  bii)/(Rcxx/N);
+           I(cx, bii)  <+ white_noise( (FOUR_K*TjK)/(Rcxx/N), "thermal");   
+        end
+        else begin
+           I(cx, bii)  <+ V(cx,  bii)*1e-12;
+        end
+        
+
+        I(b)   <+ ddt(Cpb * V(b));  
+        I(c)   <+ ddt(Cpc * V(c));  
+        I(b,c) <+ ddt(Cq * V(b,c)); 
+
+        Pwr(ti) <+ -Ipdiss;
+        if (Rth) begin
+            Pwr(t,ti) <+ Temp(t,ti) / Rth;
+            Pwr(t,ti) <+ Cth * ddt(Temp(t,ti));
+        end
+        else begin
+            Pwr(t,ti) <+ Temp(t,ti) * 1e3;
+        end
+
+        
+        
+        if(Ib0<=0) begin
+           Iniix = 0;
+           Iniiix = 0;
+        end
+        if((Ib0+Ic1)<=0) begin
+           Inivx = 0;
+        end
+        else begin
+           if (Ab == 2) begin
+              Iniix  = Ib0;
+           end
+           else begin
+              Iniix  = pow(Ib0,(Ab*0.5));
+           end
+           if (Afb == 2) begin
+              Iniiix = Ib0;
+           end
+           else begin
+              Iniiix = pow(Ib0,(Afb*0.5));
+           end
+           if (Afe == 2) begin
+              Inivx  = (Ib0+Ic1);
+           end
+           else begin
+              Inivx  = pow((Ib0+Ic1),(Afe*0.5));
+           end
+        end
+
+
+        I(nii)    <+ V(nii);
+        I(nii)    <+ ddt(V(nii)/(2.0*3.1415*Fb));
+        I(nii)    <+ white_noise(Area*Kb ); 
+        I(niix)   <+ V(niix);
+        I(niix)   <+ Iniix;
+        I(niii)   <+ V(niii);
+        I(niii)   <+ flicker_noise(Area*Kfb, Ffeb, "Flicker noise base-emitter junction (a)"); 
+        I(niiix)  <+ V(niiix);
+        I(niiix)  <+ Iniiix;
+        I(bii,ei) <+ V(nii)*V(niix);
+        I(bii,ei) <+ V(niii)*V(niiix); 
+
+        I(niv)    <+ V(niv);
+        I(niv)    <+ flicker_noise(Area*Kfe , Ffee, "Hooge noise of emitter resistance"); 
+        I(nivx)   <+ V(nivx);
+        I(nivx)   <+ Inivx;
+
+        I(e,  ei) <+ V(niv)*V(nivx)/(Re/N); 
+
+   end
+   
+   
+   
+
+endmodule

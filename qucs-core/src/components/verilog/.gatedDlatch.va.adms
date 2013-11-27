@@ -1,0 +1,127 @@
+# 1 "./gatedDlatch.va"
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 14 "./gatedDlatch.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 15 "./gatedDlatch.va"
+module gatedDlatch (D, C, QB, QO); 
+ inout D, C, QB, QO ;
+ electrical D, C, QB, QO;
+ electrical QA;
+
+
+ parameter real TR_H=6 from [1.0:20.0]  (*info="cross coupled gate transfer function high scaling factor"*);
+ parameter real TR_L=5  from [1.0:20.0]  (*info="cross coupled gate transfer function low scaling factor"*);
+ parameter real Delay = 1e-9 from [0: inf]  (*info="cross coupled gate delay" unit="s"*);
+
+real Rd, Ccc, In1, In2a, In2;
+
+analog begin
+@(initial_model)
+  begin
+    Rd = 1e3;
+    Ccc= Delay*1.43/Rd;
+  end
+
+In1  = (1-V(D)*V(C));
+In2a = 1-V(D);
+In2  = (1-V(C)*In2a);
+I(QO)   <+ -0.5*(1-tanh(TR_H*(In1*V(QB)-0.5)));
+I(QO)   <+ V(QO);
+I(QB)  <+ -0.5*(1-tanh(TR_L*(In2*V(QA)-0.5)));
+I(QB)  <+ V(QB);
+I(QO, QA) <+ V(QO, QA)/Rd;
+I(QA)    <+ ddt(Ccc*V(QA));
+end
+endmodule

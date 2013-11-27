@@ -1,0 +1,12 @@
+# Info #
+Name:P_OUT
+Symbol:ZP_OUT
+Unit:W
+Analysis type:TRAN
+Definition:Right Side Lobe
+Note:
+#
+
+# Commands #
+export real #SYMBOL# = 20*log10( max(trim(sig=mag((2*V(3))), from=1100e6, to=1200e6 )) )
+#

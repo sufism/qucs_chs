@@ -1,0 +1,267 @@
+# 1 "./mod_amp.va"
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 12 "./mod_amp.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 13 "./mod_amp.va"
+ 
+ module mod_amp (in_p, in_n, out_p);
+ inout in_p, in_n, out_p;
+ electrical in_p, in_n, out_p;
+ electrical n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12;
+ 
+
+ 
+ parameter real GBP =1e6 from [1 : inf]
+   (*info="Gain bandwidth product (Hz)"*);
+ parameter real AOLDC = 106.0 from [0.01 : inf] 
+   (*info="Open loop DC gain (dB)"*);
+ parameter real FP2 = 3e6 from [0.01 : inf]
+   (*info="Second pole frequency (Hz)"*);
+ parameter real RO = 75 from [0.01 : inf]
+   (*info="Output resistance (Ohm)"*);
+ parameter real CD = 1e-12 from [1e-20 : inf]
+   (*info="Differential input capacitance (F)"*);
+ parameter real RD = 2e6 from [0.01 : inf]
+   (*info="Differential input resistance (Ohm)"*);
+ parameter real IOFF = 20e-9 from [1e-20 : inf]
+   (*info="Input offset current (A)"*);
+ parameter real IB = 80e-9 from [1e-20 : inf]
+   (*info="Input bias current (A)"*);
+ parameter real VOFF = 7e-4 from [0 : inf]
+   (*info="Input voltage offset (A)"*);
+ parameter real CMRRDC = 90.0 from [1 : inf]
+   (*info="Common mode rejection ratio at DC (dB)"*);
+ parameter real FCM = 200 from [0.01 : inf]
+   (*info="Common mode zero corner frequency (Hz)"*);
+ parameter real PSRT = 5e5 from [1 : inf]
+   (*info="Positive slew rate (V/s)"*);
+ parameter real NSRT = 5e5 from [1 : inf]
+   (*info="Negative slew rate (V/s)"*);
+ parameter real VLIMP = 14 from [0.01 : inf]
+   (*info="Positve output voltage limit (V)"*);
+ parameter real VLIMN = -14 from [-inf : 0]
+   (*info="Negative output voltage limit (V)"*);
+ parameter real ILMAX = 35e-3 from [1e-9 : inf]
+   (*info="Maximum DC output current (A)"*);
+ parameter real CSCALE = 50 from [0 : inf]
+   (*info="Current limit scaling factor"*);
+
+ 
+ real RP1, CP1, RP2, CP2;
+ real Rdiff, Voffset;
+ real CMRR0, CMgain, QCM; 
+ real Slewratepositive, Slewratenegative;
+ real MTWOPI;
+ 
+ analog begin
+ 
+ 
+ 
+   MTWOPI =  6.28318530717958647693;
+ 
+ 
+ 
+   Voffset = VOFF*0.5;
+   Rdiff=RD/2;
+   CMRR0 = pow(10, CMRRDC/20);
+   CMgain = 1e6/CMRR0;
+   QCM = (1.0/(MTWOPI*1e6*FCM))*V(n6, n10);
+   RP1= pow(10, AOLDC/20);
+   CP1 = 1/(MTWOPI*GBP);
+   RP2 = 1;
+   CP2 = 1/(MTWOPI*FP2);
+   Slewratepositive = PSRT/(MTWOPI*GBP);
+   Slewratenegative = NSRT/(MTWOPI*GBP);
+  
+  
+  
+    I(in_p, n7) <+ V(in_p, n7);
+    I(in_p, n7) <+ Voffset;
+  
+    I(in_n, n9) <+ V(in_n, n9);
+    I(in_n, n9) <+ -Voffset;
+  
+  
+  
+    I(n7) <+ IB;
+    I(n9) <+ IB;
+  
+  
+  
+    I(n7,n9) <+ IOFF/2;
+  
+  
+
+  
+  I(n7, n8) <+ V(n7, n8)/Rdiff;
+  I(n9, n8) <+ V(n9, n8)/Rdiff;
+  I(n7, n9) <+ ddt(CD*V(n7, n9));
+  
+  
+  
+  I(n6) <+  -CMgain*V(n8);
+  I(n6) <+ V(n6);
+  I(n6, n10) <+ V(n6, n10)/1e6;
+  I(n6, n10) <+ ddt(QCM);
+  I(n10) <+ V(n10);
+ 
+ 
+ 
+   I(n11) <+ -V(n10);
+   I(n11) <+ -V(n7, n9);
+   I(n11) <+  V(n11);
+ 
+ 
+ 
+   if (V(n11) > Slewratepositive)
+                      I(n12) <+ -Slewratepositive;
+   else if (V(n11) < -Slewratenegative)
+                      I(n12) <+  Slewratenegative;
+   else I(n12) <+ -V(n11);
+
+   I(n12) <+ V(n12);
+ 
+ 
+ 
+   I(n3) <+ -V(n12);
+   I(n3) <+ V(n3)/RP1;
+   I(n3) <+ ddt(CP1*V(n3));
+   
+   
+   
+   I(n5) <+ -V(n3);
+   I(n5) <+ V(n5)/RP2;
+   I(n5) <+ ddt(CP2*V(n5));
+   
+   
+   
+   if (V(n2, out_p) >= ILMAX) 
+      begin
+        I(n4) <+  -V(n5);
+        I(n4) <+ CSCALE*V(n5)*(V(n2, out_p) - ILMAX);
+        I(n4) <+ V(n4);
+      end
+   else if (V(n2, out_p) <= -ILMAX)
+        begin
+         I(n4) <+  -V(n5);
+         I(n4) <+ -CSCALE*V(n5)*(V(n2, out_p) + ILMAX);
+         I(n4) <+ V(n4);
+        end
+   else
+        begin
+            I(n4) <+ -V(n5);
+            I(n4) <+  V(n4);
+        end
+   
+   
+   
+   I(n4, n2) <+ V(n4, n2)/(RO-1);
+   I(n2, out_p) <+ V(n2, out_p);
+   
+   
+   
+   
+  
+  if (V(out_p) > VLIMP)
+      begin
+        I(out_p) <+  -10.0*VLIMP;
+        I(out_p) <+ 10.0*V(out_p);
+      end
+  else if (V(out_p) < VLIMN)
+      begin
+        I(out_p) <+ -10.0*VLIMN;
+        I(out_p) <+ 10.0*V(out_p);
+     end
+
+  end
+endmodule

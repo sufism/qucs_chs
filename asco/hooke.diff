@@ -1,0 +1,72 @@
+0a1,13
+> /*
+>  * Copyright (C) 2006 Joao Ramos
+>  * Your use of this code is subject to the terms and conditions of the
+>  * GNU general public license version 2. See "COPYING" or
+>  * http://www.gnu.org/licenses/gpl.html
+>  *
+>  * Plug-in to add to 'Eldo', 'HSPICE', 'LTspice', 'Spectre' and 'Qucs' circuit simulator optimization capabilities
+>  *
+>  */
+> 
+> 
+> 
+> 
+135a149
+> #include "stdlib.h"
+137a152,161
+> 
+> /* #include "auxfunc.h" */
+> #include "initialize.h"
+> 
+> 
+> 
+> 
+> /*---------Function declarations----------------------------------------*/
+> extern double evaluate(int D, double tmp[], char *argv); /* obj. funct. */
+> 
+171c195
+< best_nearby(delta, point, prevbest, nvars)
+---
+> best_nearby(delta, point, prevbest, nvars, filename)
+174a199
+> 	   char            *filename;
+184c209,211
+< 		   ftmp = f(z, nvars);
+---
+> 		   /* ftmp = f(z, nvars); */
+> 		   funevals++;
+> 		   ftmp = evaluate(nvars, z, filename);
+204c231
+< hooke(nvars, startpt, endpt, rho, epsilon, itermax)
+---
+> hooke(nvars, startpt, endpt, rho, epsilon, itermax, filename)
+207a235
+> 	   char            *filename;
+223c251,253
+< 	   fbefore = f(newx, nvars);
+---
+> 	   /* fbefore = f(newx, nvars); */
+> 	   funevals++;
+> 	   fbefore = evaluate(nvars, newx, filename);
+283c313
+< main()
+---
+> int HJ(int argc, char *argv[])
+291,293c321,329
+< 	   nvars = 2;
+< 	   startpt[0] = -1.2;
+< 	   startpt[1] = 1.0;
+---
+> 	   /* nvars = 2;         */
+> 	   /* startpt[0] = -1.2; */
+> 	   /* startpt[1] = 1.0;  */
+> 	   nvars=0;
+> 	   while (parameters[nvars].name[0]  != '\0')
+> 		   nvars++;                                     /*---number of parameters---------------*/
+> 	   for (i = 0; i < nvars; i++) {
+> 		   startpt[i] = scaleto(parameters[i].value, parameters[i].minimum, parameters[i].maximum, -10, +10, parameters[i].format);
+> 	   }
+303a340,341
+> 
+> 	return(EXIT_SUCCESS);

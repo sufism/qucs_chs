@@ -1,0 +1,136 @@
+# 1 "./dff_SR.va"
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 14 "./dff_SR.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 15 "./dff_SR.va"
+module dff_SR (S, D, CLK, R, QB, QO); 
+ inout S, D, CLK, R, QB, QO ;
+ electrical S, D, CLK, R, QB, QO;
+ electrical n1, n1A, n2, n3, n3A, n4, QA;
+
+
+ parameter real TR_H=6 from [1.0:20.0]  (*info="cross coupled gate transfer function high scaling factor"*);
+ parameter real TR_L=5  from [1.0:20.0]  (*info="cross coupled gate transfer function low scaling factor"*);
+ parameter real Delay = 1e-9 from [0: inf]  (*info="cross coupled gate delay" unit="s"*);
+
+real Rd, Ccc;
+
+analog begin
+@(initial_model)
+  begin
+    Rd = 1e3;
+    Ccc= Delay*1.43/Rd;
+  end
+I(n1)  <+ -0.5*(1-tanh(TR_H*(V(n4)*V(n2)*V(S)-0.5)));
+I(n1)  <+ V(n1);
+I(n2)  <+ -0.5*(1-tanh(TR_L*(V(n1A)*V(CLK)*V(R)-0.5)));
+I(n2)  <+ V(n2);
+I(n3)  <+ -0.5*(1-tanh(TR_H*(V(n2)*V(CLK)*V(n4)-0.5)));
+I(n3)  <+ V(n3);
+I(n4)  <+ -0.5*(1-tanh(TR_L*(V(n3A)*V(D)*V(R)-0.5)));
+I(n4)  <+ V(n4);
+I(QO)   <+ -0.5*(1-tanh(TR_H*(V(n2)*V(QB)*V(S)-0.5)));
+I(QO)   <+ V(QO);
+I(QB)  <+ -0.5*(1-tanh(TR_L*(V(QA)*V(n3A)*V(R)-0.5)));
+I(QB)  <+ V(QB);
+I(n1, n1A) <+ V(n1, n1A)/Rd;
+I(n1A) <+ ddt(Ccc*V(n1A));
+I(n3, n3A) <+ V(n3, n3A)/Rd;
+I(n3A) <+ ddt(Ccc*V(n3A));
+I(QO, QA) <+ V(QO, QA)/Rd;
+I(QA)    <+ ddt(Ccc*V(QA));
+
+end
+endmodule

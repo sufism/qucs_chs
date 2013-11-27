@@ -1,0 +1,18 @@
+Stefan Jahn <stefan@lkcc.org> is the author of the files in this package
+to add Autotools build support to ASCO.
+
+------------------------------------------------------------------------
+1. HOW TO USE
+   Type at the command line:
+
+   > aclocal
+   > automake -f -c -a
+   > sh autogen.sh
+   > ./configure
+   > make
+
+
+2. CREATE A NEW PACKAGE
+   To get a ready to distribute package, execute:
+
+   > make distcheck

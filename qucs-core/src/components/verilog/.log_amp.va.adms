@@ -1,0 +1,204 @@
+# 1 "./log_amp.va"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 18 "./log_amp.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 19 "./log_amp.va"
+
+ module log_amp (P_I1, P_Ir, P_Vout);
+ inout P_I1, P_Ir;
+ inout P_Vout;
+
+ electrical P_I1, P_Ir, P_Vout;
+
+
+
+ electrical n3, n4;
+
+
+
+
+ parameter real Kv = 1.0 from [-inf : inf]
+   (*info="scale factor"*);
+ parameter real Dk = 0.3 from [-100 : 100]
+   (*info="scale factor error" unit = "%"*);
+ parameter real Ib1 = 5e-12 from [-inf : inf]
+   (*info="input I1 bias current" unit = "A"*);
+ parameter real Ibr = 5e-12 from [-inf : inf]
+   (*info="input reference bias current" unit = "A"*);
+ parameter real M = 5 from [1 : inf]
+   (*info="number of decades"*);
+ parameter real N = 0.1 from [0 : 100]
+   (*info="conformity error" unit = "%"*);
+ parameter real Vosout = 3e-3 from [-inf : inf]
+   (*info="output offset error" unit = "V"*);
+ parameter real Rinp = 1e6 from [1 : inf]
+   (*info="amplifier input resistance" unit = "Ohm"*);
+ parameter real Fc = 1e3 from [1 : inf]
+   (*info="amplifier 3dB frequency" unit = "Hz"*);
+ parameter real Ro = 1e-3 from [1e-3 : inf]
+   (*info="amplifier output resistance" unit = "Ohm"*);
+parameter real Ntc = 0.002 from [-100 : 100]
+   (*info="conformity error temperature coefficient" unit = "%/Celsius"*);
+parameter real Vosouttc = 80e-6 from [-inf : inf]
+   (*info="offset temperature coefficient" unit = "V/Celsius"*);
+parameter real Dktc = 0.03 from [-100 : 100]
+   (*info="scale factor error temperature coefficient" unit = "%/Celsius"*);
+parameter real Ib1tc = 0.5e-12 from [-inf : inf]
+   (*info="input I1 bias current temperature coefficient" unit = "A/Celsius"*);
+parameter real Ibrtc = 0.5e-12 from [-inf : inf]
+   (*info="input reference bias current temperature coefficient" unit = "A/Celsius"*);
+parameter real Tnom = 26.85 from [-273 : inf]
+   (*info="parameter measurement temperature" unit = "Celsius"*);
+
+real R, Ix;
+real V1, V2;
+real Cc, PI;
+real TempK, TnomK, Tdiff, NTemp, VosoutTemp, DkTemp, Ib1Temp,IbrTemp;
+
+analog begin
+
+
+
+PI=3.14159265358979323846;
+
+
+
+V1=V(P_I1);
+V2=V(P_Ir)+1e-20;
+R=Rinp+1e-6;
+Cc=1/(2*PI*Fc);
+
+
+
+TempK=$temperature;
+TnomK=Tnom+273.15;
+Tdiff =TempK-TnomK;
+NTemp=N+Ntc*Tdiff;
+VosoutTemp=Vosout+Vosouttc*Tdiff;
+DkTemp=Dk+Dktc*Tdiff;
+Ib1Temp=Ib1+Ib1tc*Tdiff;
+IbrTemp=Ibr+Ibrtc*Tdiff;
+
+if (V1 >= V2 ) Ix = Kv*(1+DkTemp/100)*log(((V1/R)-Ib1Temp)/((V2/R)-IbrTemp))+(Kv*2*(NTemp/100)*M)+VosoutTemp ;
+else Ix = 0.0;
+
+
+
+
+
+I(P_I1) <+ V(P_I1)/R;
+I(P_Ir) <+ V(P_Ir)/R;
+
+
+
+I(n3) <+ -Ix;
+I(n3) <+ V(n3);
+
+
+
+I(n4) <+ -V(n3);
+I(n4) <+ V(n4);
+I(n4) <+ ddt(Cc*V(n4));
+
+
+I(P_Vout) <+ -V(n4)/Ro;
+I(P_Vout) <+ V(P_Vout)/Ro;
+
+end
+endmodule

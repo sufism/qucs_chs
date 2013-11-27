@@ -1,0 +1,209 @@
+ASCO 0.4.8: February 27, 2012
+   * The 'postp' tool better supports Spectre
+   * Support for Spectre in the 'alter' tool
+   * Support for IEC 60063 preferred number series for resistors, capacitors and
+     inductors (E3, E6, E12, E24, E48, E96 and  E192).
+   * Code clean-up
+
+   Manual:
+   * 'alter' supports Spectre
+   * Support for IEC 60063
+
+
+
+
+ASCO 0.4.7: August 1, 2010
+   * Corrected multiprocessor optimization algorithm message truncation error
+     related to MPI_SCATTERV function
+   * Corrected load balancer implementation
+   * RF module better supports Spectre
+   * Support for LTspice and Spectre in the 'postp' tool
+   * Code clean-up and minor improvements
+
+   Manual:
+   * bandpass example is now supported in Spectre
+
+
+
+
+ASCO 0.4.6: March 25, 2007
+   * Improvements in the RF module functionality
+   * Include support for logarithmic search space for the existing variables
+   * Code refinements and bug fixes
+
+   Manual:
+   * Changes in the RF module to match new code developments
+   * Include support for logarithmic search space for the existing variables
+
+
+
+
+ASCO 0.4.5: October 8, 2006
+   * Retouched load balancer
+   * Emulation of local optimization using the parallel DE optimizer
+   * More patches to compile with MinGW32
+   * Minor enhancements
+
+   Manual:
+   * amp3 example is now supported in LTspice
+   * Local optimization using the parallel DE added to 'Optimization algorithms'
+     and 'Parameter Options'
+
+
+
+
+ASCO 0.4.4: August 30, 2006
+   * Dynamic load balancing in parallel differential evolution (DE) algorithm
+   * More patches to compile natively in win32 using MinGW32
+   * Minor bug fixes
+
+   Manual:
+   * 'Work distribution method', 'Building in win32' and  'Optimization
+      algorithms', subsections added
+
+
+
+
+ASCO 0.4.3: July 1, 2006
+   * Qucs simulator is supported
+   * Better Ctrl-C handling when using MPI
+   * Patches to compile natively in win32 using MinGW32
+   * Autotools support
+   * Minor compilation/bug fixes
+
+   Manual:
+   * Initial support for Qucs
+   * Autotools installation
+   * 'Qucs examples' section added
+
+
+
+
+ASCO 0.4.2: May 14, 2006
+   * Uses updated multiprocessor optimization algorithm
+   * Minor Cygwin compatibility corrections and other minor improvements
+
+   Manual:
+   * Include warning that misconvervenge can occur if AlterMC is set 'too low'
+     before starting simulations re-runs
+   * Selection between MPI_Send and MPI_Scatterv in 'de36.c' added
+
+
+
+
+ASCO 0.4.1: April 9, 2006
+   * Multiple simulations can now be runned in the same hostname (computer)
+   * Local optimization algorithm: Hooke&Jeeves and Nelder-Mead
+   * Minor compilation/bug fixes
+
+   Manual:
+   * 'Quick Start Guide' section added
+   * 'rosen' replaced by 'general'
+   * Hybrid optimization algorithm: Hooke&Jeeves and Nelder-Mead
+
+
+
+
+ASCO 0.4.0: March 5, 2006
+   * Multiprocessor support
+   * Minor compilation/bug fixes
+   * More or less 5400 lines
+
+   Manual:
+   * Parallel processing documented
+   * No ALTER commands added should file 'alter.inc' exist
+
+
+
+
+ASCO 0.3.12: January 29, 2006
+   * RF module included
+   * Minor bug fixes
+
+   Manual:
+   * RF module and examples describing its usage included
+   * Section 'Getting Started' explains text written by 'de36.c' to stdout
+
+
+
+
+ASCO 0.3.11: December 26, 2005
+    * 'alter', ' monte' and 'postp' analysis tools added
+    * Code clean-up
+
+    Manual:
+    * 'Chapter 7, Tools and Modules' includes new tools
+
+
+
+
+ASCO 0.3.10: November 28, 2005
+    * Initial support for Spectre
+    * 'log' analysis tool added
+    * Minor bug fixes
+    * Code clean-up
+
+    Manual:
+    * # Post Processing # documented and sub-section 'Extract Commands' rearranged
+    * Section 'LTspice Examples' .... dos2unix
+    * Chapter 7, started and 'log' tool documented
+    * 'Eldo Examples', 'Digital inverter' includes 'log' example
+    * Initial support for Spectre added
+
+
+
+
+ASCO 0.3.9: October 27, 2005
+    * First public release
+
+
+
+
+ASCO 0.3.8: August 2, 2005
+    * ASCO name used for the first time
+    * Add support for LTspice simulator
+    * Major code clean-up and modularization
+    * About 3600 lines, including the DE code
+
+
+
+
+version 0.3.3: July 12, 2005
+    * Add support for HSPICE simulator.
+
+
+
+
+version 0.3.0: July 4, 2005
+    * Autonomous optimization using the differential evolution (DE) algorithm
+      from Rainer Storn and Ken Price
+    * Less than 2400 lines, including the DE code
+
+
+
+
+version 0.2.5: June 28, 2005
+    * Code base divided into multiple files
+
+
+
+
+version 0.2.0: September 4, 2004
+    * Implement process-voltage-temperature variations
+    * One file with less than 850 lines plus external functions
+
+
+
+
+version 0.1.0: July 19, 2004
+    * Code base divided in two major functions.
+    * Can read and write a variable number of optimization variables
+    * About 470 lines plus external functions
+
+
+
+
+version 0.0.1: June 25, 2004
+    * The first version with less than 500 lines and supporting only Eldo
+    * Rudimentary operation using simulated annealing optimization algorithm
+      implemented in Octave

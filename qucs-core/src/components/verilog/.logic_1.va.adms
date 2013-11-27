@@ -1,0 +1,108 @@
+# 1 "./logic_1.va"
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 14 "./logic_1.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 15 "./logic_1.va"
+module logic_1 (L1); 
+ inout L1;
+ electrical L1;
+
+ parameter real LEVEL=1 from [-inf:inf]  (*info= "logic 1 voltage level" unit="V"*);
+
+analog begin
+I(L1) <+ -LEVEL;
+I(L1) <+ V(L1);
+end
+endmodule

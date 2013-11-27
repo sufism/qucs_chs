@@ -1,0 +1,1281 @@
+# 1 "./hicumL2V2p11.va"
+
+
+
+
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 6 "./hicumL2V2p11.va"
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 7 "./hicumL2V2p11.va"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module hicumL2V2p1 (c,b,e,s,tnode);
+
+
+
+inout 		c,b,e,s,tnode;
+electrical 	c,b,e,s,ci,ei,bp,bi,si;
+electrical 	tnode;
+
+
+branch 		(b,bp) 	iresbx;
+branch 		(b,bp) 	vresbx;
+branch 		(ci,c) 	irescx;
+branch 		(ci,c) 	vrescx;
+branch 		(ei,e) 	iresex;
+branch 		(ei,e) 	vresex;
+branch 		(bp,bi) irescb;
+branch 		(bp,bi) vrescb;
+branch 		(si,s) 	irescs;
+branch 		(si,s) 	vrescs;
+			
+
+
+
+
+
+
+
+parameter real c10  	= 1.516E-31	from [0:1]; 
+parameter real qp0  	= 5.939E-15	from (0:1]; 
+parameter real ich  	= 1.0E11	from [0:inf); 
+parameter real hfe  	= 1.0		from [0:inf];
+parameter real hfc  	= 0.03999	from [0:inf];
+parameter real hjei 	= 0.435		from [0:100];
+parameter real hjci 	= 0.09477	from [0:100]; 
+
+
+parameter real ibeis 	= 3.47E-20	from [0:1]; 
+parameter real mbei  	= 1.025		from (0:10]; 
+parameter real ireis 	= 390E-12	from [0:1]; 
+parameter real mrei  	= 3		from (0:10]; 
+parameter real ibeps 	= 4.18321E-21	from [0:1]; 
+parameter real mbep  	= 1.045		from (0:10]; 
+parameter real ireps 	= 1.02846E-14	from [0:1]; 
+parameter real mrep  	= 3		from (0:10]; 
+parameter real mcf  	= 1.0		from (0:10];
+
+
+parameter real ibcis 	= 3.02613E-18	from [0:1.0]; 
+parameter real mbci  	= 1.0		from (0:10]; 
+parameter real ibcxs 	= 4.576E-29	from [0:1.0]; 
+parameter real mbcx  	= 1.0		from (0:10]; 
+
+
+parameter real ibets 	= 0.0		from [0:1]; 
+parameter real abet  	= 36.74		from [0:inf); 
+
+
+parameter real favl  	= 14.97		from [0:inf); 
+parameter real qavl  	= 7.2407E-14	from [0:inf); 
+parameter real alfav 	= 0.0; 
+parameter real alqav 	= 0.0; 
+
+
+parameter real rbi0  	= 7.9		from [0:inf); 	
+parameter real rbx   	= 13.15		from [0:inf); 
+parameter real fgeo  	= 0.724		from [0:1]; 
+parameter real fdqr0 	= 200		from [0:1]; 	
+parameter real fcrbi 	= 0.0		from [0:1];
+parameter real fqi   	= 1.0		from [0:1]; 
+parameter real re    	= 9.77		from [0:inf); 
+parameter real rcx   	= 10		from [0:inf); 
+
+
+parameter real itss 	= 2.81242E-19	from [0:1.0]; 
+parameter real msf 	= 1.0		from (0:10]; 
+parameter real iscs	= 7.6376E-17	from [0:1.0]; 
+parameter real msc  	= 1.0		from (0:10]; 
+parameter real tsf  	= 1.733E-8	from [0:inf); 
+
+
+parameter real rsu 	= 800		from [0:inf); 
+parameter real csu 	= 1.778E-14	from [0:inf);
+
+
+parameter real cjei0 	= 5.24382E-14	from [0:inf); 
+parameter real vdei  	= 0.9956	from (0:10]; 
+parameter real zei   	= 0.4		from (0:1]; 
+parameter real aljei 	= 2.5		from [1:inf); 
+parameter real cjep0 	= 0		from [0:inf); 
+parameter real vdep  	= 1		from (0:10]; 
+parameter real zep   	= 0.01		from (0:1]; 
+parameter real aljep 	= 2.5		from [1:inf); 
+parameter real cjci0 	= 4.46887E-15	from [0:inf); 
+parameter real vdci  	= 0.7		from (0:10]; 
+parameter real zci   	= 0.38		from (0:1]; 
+parameter real vptci 	= 100		from (0:100]; 
+parameter real cjcx0 	= 1.55709E-14	from [0:inf); 
+parameter real vdcx  	= 0.733		from (0:10]; 
+parameter real zcx   	= 0.34		from (0:1]; 
+parameter real vptcx 	= 100		from (0:100]; 
+parameter real fbc   	= 0.3487	from [0:1]; 
+parameter real cjs0  	= 17.68E-15	from [0:inf); 
+parameter real vds   	= 0.621625	from (0:10]; 
+parameter real zs    	= 0.122136	from (0:1]; 
+parameter real vpts  	= 1000		from (0:1000];
+
+
+parameter real t0    	= 1.28E-12	from [0:inf); 
+parameter real dt0h 	= 260E-15	from [0:inf); 
+parameter real tbvl  	= 2.0E-13	from [0:inf); 
+parameter real tef0  	= 0.0		from [0:inf); 	
+parameter real gtfe  	= 1.0		from (0:10];
+parameter real thcs  	= 46E-15	from [0:inf); 
+parameter real alhc  	= 0.08913	from (0:10]; 
+parameter real fthc  	= 0.8778	from [0:1]; 
+parameter real rci0  	= 50.4277	from (0:inf);
+parameter real vlim  	= 0.9		from (0:10]; 
+parameter real vces  	= 0.01		from [0:1]; 
+parameter real vpt   	= 10		from [0:100]; 
+parameter real tr	= 1.0E-11	from [0:inf); 
+
+
+parameter real ceox 	= 1.71992E-15	from [0:inf); 
+parameter real ccox 	= 4.9E-15	from [0:inf);
+
+
+parameter real alqf 	= 0.1288	from [0:1]; 
+parameter real alit 	= 1.0		from [0:1]; 
+
+
+parameter real kf 	= 2.83667E-9	from [0:inf);
+parameter real af 	= 2.0		from (0:10]; 
+parameter real krbi 	= 1.0       	from (0:inf);
+
+
+parameter real latb    	= 10.479	from [0:inf); 
+parameter real latl    	= 0.300012	from [0:inf);
+
+
+parameter real vgb     	= 1.112		from (0:10]; 
+parameter real alt0    	= 0.0017580;
+parameter real kt0     	= 4.07E-6;
+parameter real zetaci  	= 0.7;
+parameter real zetacx  	= 1.0;		
+parameter real alvs    	= 0.001; 
+parameter real alces   	= 0.000125; 
+parameter real zetarbi 	= 0.0;		
+parameter real zetarbx 	= 0.2;		
+parameter real zetarcx 	= 0.21;		
+parameter real zetare  	= 0.7;
+parameter real alb     	= 0.007;	             
+
+
+parameter real rth 	= 1293.95		from [0:inf); 
+parameter real cth 	= 7.22203E-11		from [0:inf); 
+
+
+parameter real tnom  	= 27.0;
+parameter real dt    	= 0.0;			
+
+
+	
+	
+	
+                
+        real VT,Tamb,Tdev,Tnom,qtt0,qtt0_zci,ln_qtt0,r_VgVT,V_gT,dT,k;
+	real ireis_t,ibeis_t,ibcxs_t,ibcis_t;
+	real iscs_t,cje0_t,cjci0_t,cjcx0_t;
+	real cjs0_t,rci0_t,vlim_t;
+	real vces_t,thcs_t,tef0_t,rbi_t,rbi0_t;
+	real rbx_t,rcx_t,re_t,rsu_t,t0_t;
+	real vdei_t,vdci_t;
+	real c10_t,cjei0_t,qp0_t;
+      	real vdcx_t,vptcx_t,cjcx01_t,cjcx02_t,vpts_t,itss_t,tsf_t;
+      	real ibeps_t,ireps_t,cjep0_t,ibets_t,abet_t;
+      	real aljei_t,qavl_t,favl_t,vptci_t,vdep_t,aljep_t;
+      	
+      	
+      	real mg,zetabci,zetabcxt,zetasct,zetatef,avs;
+      	real k1,k2,k10,k20,vgbe0,vgbc0,vgsc0,dvg0;	
+      	real vgb0,vge0,vgc0,vgs0,vge_t0,vge_t,vgb_t,vgb_t0,vgbe_t,vgbe_t0,vt0;      	
+      	
+        
+        real Qjci,Cjci,Qjcx,Qjcxi,Qjcii,qjcx0_t_i,ccox1,ccox2,C_1;
+	real cjcx0_t_ii,cjcx0_t_i,qjcx0_t_ii,cratio_t,Cjcit,cc;
+
+        
+        real Qjei,Cjei,vdj1,DFe; 
+        real Qjep,Cjep;
+ 
+        
+        real itf,itr,it,ibei,irei,ibci,ibep,irep,ibh_rec;
+	real Oich,Orci0_t,Ovpt,Otbhrec,Tf,Tr,VT_f,i_0f,i_0r,a_bpt,Q_0,Q_p,Q_bpt;
+	real T_f0,Q_fT,Q_bf,T_fT,b_q,Q_fC,T_fC,T_cT,I_Tf1,A,a_h,vds_t;
+      	real Q_pT,l_it,d_Q,d_Q0;
+      	real cbepar1,cbepar2,qrbi;
+        
+        
+        real Qf,Qdei,tf0;
+        real Qr,Qdci;       
+        real ick;
+        real vc,vceff;
+	
+	
+	real ibet;
+
+        
+	real iavl;
+	
+	
+        real rbi; 
+
+        
+        real ijbcx,cjcx01,cjcx02;
+
+        
+        real ijsc,Cjs,Qjs;
+        
+        
+        real  HSUM,HSI_Tsu,HSa,HSb,Qdsu;
+
+	
+	real pterm,itnode,qtnode;	
+	
+	
+	real  ICKv,ICKa;	
+	real  AVLS_avl,AVLv_bord,AVLv_q,AVLU0,AVLa;
+        real  vdj0,vdjt,vdt,d1; 
+	real  DIOY,le;
+	real  FFT_fbS,FFa,FFx,FFs,FFw,FFw_2,FFd_QfB,FFd_TfB,FFT_pcS,FFQ_fC,FFT_fC,FFQ_cT,FFT_cT,FFd_TfE,FFd_QfE,FFa_w;
+	real  FCz,FCw2,FCf1,FCf2,FCf3,FCf_ci,FCz_1;
+	real  FCd_a,FCdaick_ditf,FCa,FCw,FCdw_daick,FCdfc_dw,FCdw_ditf,FCdfc_ditf,FCf_CT,FCdfCT_ditf,FCrt,FCln,FClnl,FClnb,FCda1_dw,FCdf1_dw,FCdf2_dw,FCdf3_dw,FCd_f;
+	real  FCa1,FCa_ck,FCxl,FCxb;
+	real  Dz_r,Dv_p,DV_f,DC_max,DC_c,Da,Dv_e,De,De_1,Dv_j1,Dv_r,De_2,Dv_j2,Dv_j4,DC_j1,DC_j2,DC_j3,DQ_j1,DQ_j2,DQ_j3,DCln1,DCln2,Dz1,Dzr1;
+	real  DFV_f,DFC_max,DFa,DFv_e,DFv_j,DFb,DFC_j1,DFQ_j,DFdvj_dv,DFs_q,DFs_q2;
+	real  z,a,a2,a3,r,x;
+	real  FCdfCT_dw;
+	real  f_QR,Qz,f_p,ETA,Q_fi,I_BI; 
+	real  a_eg,aa,ab,vve,cce,pocce,zex,czz; 
+	
+	
+  	real fourkt,twoq,flicker_Pwr,rbin;
+	
+	
+
+
+
+
+
+
+analog	begin
+
+
+	
+
+	Tnom    = tnom+ 273.15;
+	Tamb    = $temperature;
+	Tdev    = Tamb+dt+V(tnode);
+
+
+	if(Tdev <  -100.0 + 273.15)
+	   Tdev =  -100.0 + 273.15;
+	else
+ 	if (Tdev >  326.85 + 273.15)
+	   Tdev =  326.85 + 273.15;
+ 
+	vt0     = $vt(Tnom);
+	VT      = $vt(Tdev);
+	dT      = Tdev-Tnom;  
+	qtt0    = Tdev/Tnom;
+	ln_qtt0 = ln(qtt0);
+	avs     = alvs*Tnom;
+        V_gT    = 3.0*VT*ln_qtt0 + vgb*(qtt0-1.0);
+        r_VgVT  = V_gT/VT;
+
+        
+        
+        
+        a	= mcf*r_VgVT/mbei - alb*dT; 
+	ibeis_t = ibeis*exp(a);
+	a       = mcf*r_VgVT/mrei - alb*dT;
+        ireis_t = ireis*exp(a);
+
+        
+	 if (cjei0 > 0.0) begin		vdj0	= vdei*qtt0-V_gT;		vdj1	= 0.1*vdei;		vdjt	= (vdj0-vdj1)/VT;		if (vdjt <  11.0 )			vdei_t	= vdj1+VT*ln(1.0+exp(vdjt));		else			vdei_t	= vdj0;		cjei0_t	= cjei0*exp(zei*ln(vdei/vdei_t));		if (1 == 1)			aljei_t	= aljei*vdei_t/vdei;		else			aljei_t	= aljei;    end else begin    		cjei0_t	= cjei0;    		vdei_t	= vdei;    		aljei_t	= aljei;    end
+
+        
+	c10_t	= c10*exp(r_VgVT);
+	a	= vdei_t/vdei;
+	qp0_t	= qp0*(1.0+0.5*zei*(1.0-a));
+
+        
+        qtt0_zci = exp(zetaci*ln_qtt0);
+	Orci0_t	= 1.0/(rci0*qtt0_zci);
+
+	
+	a = vlim*qtt0_zci*(1.0-alvs*dT);
+        k = (a-VT)/VT;
+        if (k <  11.0)
+            vlim_t = VT + VT*ln(1.0+exp(k));
+        else
+            vlim_t = a;
+
+        
+	vces_t  = vces*(1+alces*dT);
+
+
+        
+        a       = r_VgVT/mbci;
+        ibcis_t = ibcis*exp(a);
+	
+        
+         if (cjci0 > 0.0) begin		vdj0	= vdci*qtt0-V_gT;		vdj1	= 0.1*vdci;		vdjt	= (vdj0-vdj1)/VT;		if (vdjt <  11.0 )			vdci_t	= vdj1+VT*ln(1.0+exp(vdjt));		else			vdci_t	= vdj0;		cjci0_t	= cjci0*exp(zci*ln(vdci/vdci_t));		if (0 == 1)			vptci_t	= vptci*vdci_t/vdci;		else			vptci_t	= vptci;    end else begin    		cjci0_t	= cjci0;    		vdci_t	= vdci;    		vptci_t	= vptci;    end
+
+        
+	t0_t    = t0*(1+alt0*dT+kt0*dT*dT);
+        
+        
+        a      = 1.0+alb*dT;
+        k      = 0.5*(a+sqrt(a*a+0.01));
+        tef0_t = tef0*qtt0/k;
+        
+        
+	thcs_t  = thcs*qtt0_zci/qtt0;
+
+
+	
+	favl_t  = favl*exp(alfav*dT);
+	qavl_t  = qavl*exp(alqav*dT);	
+
+
+        
+	rbi0_t  = rbi0*exp(zetarbi*ln_qtt0);
+	
+	
+	
+	a       = mcf*r_VgVT/mbep - alb*dT;
+        ibeps_t = ibeps*exp(a);
+        a       = mcf*r_VgVT/mrep - alb*dT;
+        ireps_t = ireps*exp(a);
+	
+	
+	 if (cjep0 > 0.0) begin		vdj0	= vdep*qtt0-V_gT;		vdj1	= 0.1*vdep;		vdjt	= (vdj0-vdj1)/VT;		if (vdjt <  11.0 )			vdep_t	= vdj1+VT*ln(1.0+exp(vdjt));		else			vdep_t	= vdj0;		cjep0_t	= cjep0*exp(zep*ln(vdep/vdep_t));		if (1 == 1)			aljep_t	= aljep*vdep_t/vdep;		else			aljep_t	= aljep;    end else begin    		cjep0_t	= cjep0;    		vdep_t	= vdep;    		aljep_t	= aljep;    end
+
+
+	
+
+	
+	
+	 C_1	= (1.0-fbc)*(cjcx0+ccox);
+	 if (C_1 >= ccox) begin
+	 	ccox1	= ccox;
+	 	ccox2	= 0; 
+	 	cjcx01	= C_1-ccox;
+	 	cjcx02	= cjcx0-cjcx01;
+	 end else begin   
+	 	ccox1 	= C_1;
+	 	ccox2 	= ccox-ccox1;    
+	 	cjcx01	= 0.0;
+	 	cjcx02	= cjcx0;
+	 end
+	 
+	 if (1.0 > 0.0) begin		vdj0	= vdcx*qtt0-V_gT;		vdj1	= 0.1*vdcx;		vdjt	= (vdj0-vdj1)/VT;		if (vdjt <  11.0 )			vdcx_t	= vdj1+VT*ln(1.0+exp(vdjt));		else			vdcx_t	= vdj0;		cratio_t	= 1.0*exp(zcx*ln(vdcx/vdcx_t));		if (0 == 1)			vptcx_t	= vptcx*vdcx_t/vdcx;		else			vptcx_t	= vptcx;    end else begin    		cratio_t	= 1.0;    		vdcx_t	= vdcx;    		vptcx_t	= vptcx;    end
+	 cjcx01_t=cratio_t*cjcx01;
+	 cjcx02_t=cratio_t*cjcx02;
+
+		
+	
+	a       = r_VgVT/mbcx;
+        ibcxs_t = ibcxs*exp(a); 
+        	
+	
+	
+	rcx_t	= rcx*exp(zetarcx*ln_qtt0);
+	rbx_t	= rbx*exp(zetarbx*ln_qtt0);
+	re_t	= re*exp(zetare*ln_qtt0);
+	
+	
+	tsf_t	= tsf*exp((zetacx-1.0)*ln_qtt0);
+
+	
+        a       = r_VgVT/msf;
+        itss_t  = itss*exp(a);	
+
+	
+        a       = r_VgVT*msc;
+        iscs_t  = iscs*exp(a);	 
+
+	
+         if (cjs0 > 0.0) begin		vdj0	= vds*qtt0-V_gT;		vdj1	= 0.1*vds;		vdjt	= (vdj0-vdj1)/VT;		if (vdjt <  11.0 )			vds_t	= vdj1+VT*ln(1.0+exp(vdjt));		else			vds_t	= vdj0;		cjs0_t	= cjs0*exp(zs*ln(vds/vds_t));		if (0 == 1)			vpts_t	= vpts*vds_t/vds;		else			vpts_t	= vpts;    end else begin    		cjs0_t	= cjs0;    		vds_t	= vds;    		vpts_t	= vpts;    end
+	
+	
+
+	
+
+	
+	
+	 DIOY	= V(bi,ei)/(mbei*VT);	if (ibeis > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		ibei	= ibeis_t*(le-1.0);		if(DIOY <= -14.0) begin			ibei	= -ibeis_t;		end	end else begin		ibei	= 0.0;        end
+	 DIOY	= V(bi,ei)/(mrei*VT);	if (ireis > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		irei	= ireis_t*(le-1.0);		if(DIOY <= -14.0) begin			irei	= -ireis_t;		end	end else begin		irei	= 0.0;        end
+
+	
+
+	
+	
+    	
+	if (ich > 0.0)
+       		Oich 	= 1.0/ich;
+      	else
+       		Oich	= 0.0;
+
+	
+	
+	if(vpt > 0.0)
+       		Ovpt	= 1.0/vpt;
+     	else
+       		Ovpt	= 0.0;
+
+	
+	
+      	Tr	= tr;							
+      	VT_f	= mcf*VT;
+      	i_0f	= c10_t * limexp(V(bi,ei)/VT_f);	
+      	i_0r	= c10_t * limexp(V(bi,ci)/VT);	
+	
+	
+	 if(cjei0_t > 0.0) begin      DFV_f	= vdei_t*(1.0-exp(-ln(aljei_t)/zei));      DFC_max	= aljei_t*cjei0_t;      DFv_e	= (DFV_f-V(bi,ei))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(bi,ei);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vdei_t);      DFC_j1	= cjei0_t*exp(-zei*DFb)*DFdvj_dv;      Cjei		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjei0_t*vdei_t*(1.0-exp(DFb*(1.0-zei)))/(1.0-zei);      Qjei	= DFQ_j+DFC_max*(V(bi,ei)-DFv_j);  end else begin      Cjei		= 0.0;      Qjei	= 0.0;  end
+	 if(vptci_t <  1.0e2) begin		 if(cjci0_t > 0.0) begin      Dz_r	= zci/4.0;      Dv_p	= vptci_t-vdci_t;      DV_f	= vdci_t*(1.0-exp(-ln(2.4)/zci));      DC_max	= 2.4*cjci0_t;      DC_c	= cjci0_t*exp(ln(vptci_t/vdci_t)*(Dz_r-zci));      Da	= VT;      Dv_e	= (DV_f-V(bi,ci))/Da;      if(Dv_e <  80.0) begin        De	= exp(Dv_e);        De_1	= De/(1.0+De);        Dv_j1	= DV_f-Da*ln(1.0+De);      end else begin        De_1	= 1.0;        Dv_j1	= V(bi,ci);      end      Da	= 0.1*Dv_p+4.0*VT;      Dv_r	= (Dv_p+Dv_j1)/Da;      if(Dv_r <  80.0) begin       	De	= exp(Dv_r);       	De_2	= De/(1.0+De);       	Dv_j2	= -Dv_p+Da*ln(1.0+De);      end else begin       	De_2	= 1.0;       	Dv_j2	= Dv_j1;      end      Dv_j4	= V(bi,ci)-Dv_j1;      DCln1	= ln(1.0-Dv_j1/vdci_t);      DCln2	= ln(1.0-Dv_j2/vdci_t);      Dz1	= 1.0-zci;      Dzr1	= 1.0-Dz_r;      DC_j1	= cjci0_t*exp(DCln2*(-zci))*De_1*De_2;      DC_j2	= DC_c*exp(DCln1*(-Dz_r))*(1.0-De_2);      DC_j3	= DC_max*(1.0-De_1);      Cjci		= DC_j1+DC_j2+DC_j3;      DQ_j1	= cjci0_t*(1.0-exp(DCln2*Dz1))/Dz1;      DQ_j2	= DC_c*(1.0-exp(DCln1*Dzr1))/Dzr1;      DQ_j3	= DC_c*(1.0-exp(DCln2*Dzr1))/Dzr1;      Qjci	= (DQ_j1+DQ_j2-DQ_j3)*vdci_t+DC_max*Dv_j4;  end else begin      Cjci		= 0.0;      Qjci	= 0.0;  end	end else begin		 if(cjci0_t > 0.0) begin      DFV_f	= vdci_t*(1.0-exp(-ln(2.4)/zci));      DFC_max	= 2.4*cjci0_t;      DFv_e	= (DFV_f-V(bi,ci))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(bi,ci);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vdci_t);      DFC_j1	= cjci0_t*exp(-zci*DFb)*DFdvj_dv;      Cjci		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjci0_t*vdci_t*(1.0-exp(DFb*(1.0-zci)))/(1.0-zci);      Qjci	= DFQ_j+DFC_max*(V(bi,ci)-DFv_j);  end else begin      Cjci		= 0.0;      Qjci	= 0.0;  end	end
+	
+	
+      	
+      	Q_0	= qp0_t + hjei*Qjei + hjci*Qjci;
+      	if(Q_0 < 0.6*qp0_t) begin
+      		a_bpt	= 0.05;
+      		Q_bpt	= a_bpt*qp0_t;
+        	b_q	= Q_0/Q_bpt-1.0;
+		Q_0	= Q_bpt*(1+ln(1+exp(b_q)));
+	end
+
+	
+	 if(cjci0_t > 0.0) begin      DFV_f	= vdci_t*(1.0-exp(-ln(2.4)/zci));      DFC_max	= 2.4*cjci0_t;      DFv_e	= (DFV_f-V(bi,ci))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(bi,ci);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vdci_t);      DFC_j1	= cjci0_t*exp(-zci*DFb)*DFdvj_dv;      Cjcit		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjci0_t*vdci_t*(1.0-exp(DFb*(1.0-zci)))/(1.0-zci);      d1	= DFQ_j+DFC_max*(V(bi,ci)-DFv_j);  end else begin      Cjcit		= 0.0;      d1	= 0.0;  end
+	if(Cjcit > 0.0) 
+    		cc	= cjci0_t/Cjcit;
+    	else
+     		cc	= 1.0;
+	T_f0	= t0_t+dt0h*(cc-1.0)+tbvl*(1/cc-1.0);
+      
+	
+      	vc	= V(ci,ei)-vces_t;     
+
+	
+	 ICKv	= vc/VT;      if (ICKv <  30.0) begin      		vceff	= (1.0+ln(1+exp(ICKv-1.0)))*VT;      end else begin      		vceff	= vc;      end      ICKv	= vceff/vlim_t;      ick	= vceff*Orci0_t/sqrt(1.0+ICKv*ICKv);      ICKa	= (vceff-vlim_t)*Ovpt;      ick	= ick*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+1.0e-3)));
+
+	
+	if (T_f0 > 0.0 || Tr > 0.0) begin
+        	A	= 0.5*Q_0;
+        	Q_p	= A+sqrt(A*A+T_f0*i_0f+Tr*i_0r);
+      	end else begin
+      		Q_p	= Q_0;
+      	end
+      	
+  	I_Tf1	=i_0f/Q_p;
+      	a_h	= Oich*I_Tf1;
+      	itf	= I_Tf1*(1.0+a_h);
+      	itr	= i_0r/Q_p;
+
+      	
+      	Tf	= T_f0;
+      	Qf	= T_f0*itf;
+	 if(itf < 1.0e-6*ick) begin        Q_fT		= Qf;        T_fT		= Tf;      end else begin        FFa		= ick/itf;        FFd_TfE		= tef0_t*exp(-gtfe*ln(FFa));        FFd_QfE		= FFd_TfE*itf/(gtfe+1.0);        FFT_fbS		= (1.0-fthc)*thcs_t;        FFx		= 1.0-FFa;        FFs		= sqrt(FFx*FFx+alhc);        FFw		= (FFx+FFs)/(1.0+sqrt(1.0+alhc));        FFw_2		= FFw*FFw;        FFd_QfB		= FFT_fbS*itf*FFw_2;        FFa_w		= FFw_2*(1.0+2.0*FFa/FFs);        FFd_TfB		= FFT_fbS*FFa_w;        FFT_pcS		= fthc*thcs_t;        if(latb <= 0.0 && latl <= 0.0) begin          FFQ_fC	= FFT_pcS*itf*FFw_2;          FFT_fC	= FFT_pcS*FFa_w;          FFQ_cT	= FFQ_fC;          FFT_cT	= FFT_fC;        end else begin	   FFQ_fC		= FFT_pcS*itf;      	FCa		= 1.0-ick/itf;      	FCrt		= sqrt(FCa*FCa+alhc);      	FCa_ck		= 1.0-(FCa+FCrt)/(1.0+sqrt(1.0+alhc));      	FCdaick_ditf	= (FCa_ck-1.0)*(1-FCa)/(FCrt*itf);      	if(latb > latl) begin        	FCz		= latb-latl;        	FCxl		= 1.0+latl;        	FCxb		= 1.0+latb;        	if(latb > 0.01) begin        		FCln		= ln(FCxb/FCxl);        		FCa1		= exp((FCa_ck-1.0)*FCln);        		FCd_a		= 1.0/(latl-FCa1*latb);			FCw		= (FCa1-1.0)*FCd_a;        		FCa		= ln((1.0+latb*FCw)/(1.0+latl*FCw));        		FCdw_daick	= -FCz*FCa1*FCln*FCd_a*FCd_a;        		FClnb     	= ln(1.0+latb*FCw);            		FClnl     	= ln(1.0+latl*FCw);            		FCa1      	= FClnb - FClnl;            		FCda1_dw 	= latb/(1.0+latb*FCw) - latl/(1.0+latl*FCw);		end else begin        		FCf1		= 1.0-FCa_ck;        		FCd_a		= 1.0/(1.0-FCf1*latb);			FCw		= FCf1*FCd_a;        		FCa		= FCz*FCw;        		FCdw_daick	= -1.0*FCd_a*FCd_a;            		FClnb     	= latb*FCw;            		FClnl     	= latl*FCw;           		FCa1      	= FCz*FCw;            		FCda1_dw  	= FCz;		end        	FCf_CT		= 2.0/FCz;        	FCw2		= FCw*FCw;        	FCf1		= latb*latl*FCw*FCw2/3.0+(latb+latl)*FCw2/2.0+FCw;        	FCdf1_dw 	= latb*latl*FCw2 + (latb+latl)*FCw + 1.0;        	 z	= latb*FCw;      	if(z > 1.0e-6) begin        	x		= 1.0+z;        	a		= x*x;        	a2		= 0.250*(a*(2.0*FClnb-1.0)+1.0);        	a3		= (a*x*(3.0*FClnb-1.0)+1.0)/9.0;        	r		= latl/latb;        	FCf2		= ((1.0-r)*a2+r*a3)/latb;        	FCdf2_dw	= ((1.0-r)*x+r*a)*FClnb;      	end else begin        	a		= z*z;        	a2		= 3.0+z-0.5*a+z*a;        	a3		= -2.0*z+1.5*a+2.0*a*a/3.0;        	FCf2		= (latb*a2+latl*a3)*FCw*FCw/6.0;        	FCdf2_dw	= z+0.5*a-a*z/3.0+5.0*a*a/6.0+latl*FCw*(a-z+2.0*a*a/3.0);      	end        	 z	= latl*FCw;      	if(z > 1.0e-6) begin        	x		= 1.0+z;        	a		= x*x;        	a2		= 0.250*(a*(2.0*FClnl-1.0)+1.0);        	a3		= (a*x*(3.0*FClnl-1.0)+1.0)/9.0;        	r		= latb/latl;        	FCf3		= ((1.0-r)*a2+r*a3)/latl;        	FCdf3_dw	= ((1.0-r)*x+r*a)*FClnl;      	end else begin        	a		= z*z;        	a2		= 3.0+z-0.5*a+z*a;        	a3		= -2.0*z+1.5*a+2.0*a*a/3.0;        	FCf3		= (latl*a2+latb*a3)*FCw*FCw/6.0;        	FCdf3_dw	= z+0.5*a-a*z/3.0+5.0*a*a/6.0+latb*FCw*(a-z+2.0*a*a/3.0);      	end        	FCf_ci		= FCf_CT*(FCa*FCf1-FCf2+FCf3);        	FCdfc_dw	= FCf_CT*(FCa1*FCdf1_dw+FCda1_dw*FCf1-FCdf2_dw+FCdf3_dw);		FCdw_ditf	= FCdw_daick*FCdaick_ditf;		FCdfc_ditf	= FCdfc_dw*FCdw_ditf;        	 a = latb*FCw;    if (a > 1.0e-6) begin        FCf2   	= (a - FClnb)/latb;        FCdf2_dw 	= a / (1.0 + a);    end else begin        FCf2   	= 0.5 * a * FCw;        FCdf2_dw 	= a;    end        	 a = latl*FCw;    if (a > 1.0e-6) begin        FCf3   	= (a - FClnl)/latl;        FCdf3_dw 	= a / (1.0 + a);    end else begin        FCf3   	= 0.5 * a * FCw;        FCdf3_dw 	= a;    end		FCf_CT		= FCf_CT*(FCf2-FCf3);		FCdfCT_dw 	= FCf_CT*(FCdf2_dw-FCdf3_dw);		FCdfCT_ditf	= FCdfCT_dw*FCdw_ditf;	end else begin        	if(latb > 0.01) begin        		FCd_a		= 1.0/(1.0+FCa_ck*latb);        		FCw		= (1.0-FCa_ck)*FCd_a;        		FCdw_daick	= -(1.0+latb)*FCd_a*FCd_a;        	end else begin        		FCw		= 1.0-FCa_ck-FCa_ck*latb;        		FCdw_daick	= -(1.0+latb);        	end		FCw2		= FCw*FCw;        	FCz		= latb*FCw;        	FCz_1		= 1.0+FCz;        	FCd_f     	= 1.0/(FCz_1);        	FCf_ci		= FCw2*(1.0+FCz/3.0)*FCd_f;        	FCdfc_dw	= 2.0*FCw*(FCz_1+FCz*FCz/3.0)*FCd_f*FCd_f;		FCdw_ditf	= FCdw_daick*FCdaick_ditf;		FCdfc_ditf	= FCdfc_dw*FCdw_ditf;        	if (FCz > 0.001) begin            		FCf_CT    	= 2.0*(FCz_1*ln(FCz_1)-FCz)/(latb*latb*FCz_1);            		FCdfCT_dw 	= 2.0*FCw*FCd_f*FCd_f;       		end else begin            		FCf_CT    	= FCw2*(1.0-FCz/3.0)*FCd_f;            		FCdfCT_dw 	= 2.0*FCw*(1.0-FCz*FCz/3.0)*FCd_f*FCd_f;        	end		FCdfCT_ditf	= FCdfCT_dw*FCdw_ditf;     	end     	FFQ_cT	= FFQ_fC*FCf_CT;      	FFQ_fC	= FFQ_fC*FCf_ci;	FFT_fC	= FFT_pcS*(FCf_ci+itf*FCdfc_ditf);	FFT_cT	= FFT_pcS*(FCf_CT+itf*FCdfCT_ditf);	end        Qf		= Qf+FFd_QfB;        Tf		= Tf+FFd_TfB;        Q_fT		= Qf+hfe*FFd_QfE+hfc*FFQ_cT;        T_fT		= Tf+hfe*FFd_TfE+hfc*FFT_cT;        Qf		= Qf+FFd_QfE+FFQ_fC;        Tf		= Tf+FFd_TfE+FFT_fC;      end
+
+	
+	Qr	= Tr*itr;
+
+	
+      	l_it	= 0;
+      	if(Qf >  1.0e-5*Q_p || a_h >  1.0e-5) begin
+		
+       		Qf	= sqrt(T_f0*itf*Q_fT);
+        	Q_pT	= Q_0+Qf+Qr;
+        	d_Q	= Q_pT;
+		while (abs(d_Q) >=  1.0e-5*abs(Q_pT) && l_it <=  100) begin
+        		d_Q0	= d_Q;
+        		I_Tf1	= i_0f/Q_pT;
+        		a_h	= Oich*I_Tf1;
+        		itf	= I_Tf1*(1.0+a_h);
+        		itr	= i_0r/Q_pT;
+        		Tf	= T_f0;
+        		Qf	= T_f0*itf;
+			 if(itf < 1.0e-6*ick) begin        Q_fT		= Qf;        T_fT		= Tf;      end else begin        FFa		= ick/itf;        FFd_TfE		= tef0_t*exp(-gtfe*ln(FFa));        FFd_QfE		= FFd_TfE*itf/(gtfe+1.0);        FFT_fbS		= (1.0-fthc)*thcs_t;        FFx		= 1.0-FFa;        FFs		= sqrt(FFx*FFx+alhc);        FFw		= (FFx+FFs)/(1.0+sqrt(1.0+alhc));        FFw_2		= FFw*FFw;        FFd_QfB		= FFT_fbS*itf*FFw_2;        FFa_w		= FFw_2*(1.0+2.0*FFa/FFs);        FFd_TfB		= FFT_fbS*FFa_w;        FFT_pcS		= fthc*thcs_t;        if(latb <= 0.0 && latl <= 0.0) begin          FFQ_fC	= FFT_pcS*itf*FFw_2;          FFT_fC	= FFT_pcS*FFa_w;          FFQ_cT	= FFQ_fC;          FFT_cT	= FFT_fC;        end else begin	   FFQ_fC		= FFT_pcS*itf;      	FCa		= 1.0-ick/itf;      	FCrt		= sqrt(FCa*FCa+alhc);      	FCa_ck		= 1.0-(FCa+FCrt)/(1.0+sqrt(1.0+alhc));      	FCdaick_ditf	= (FCa_ck-1.0)*(1-FCa)/(FCrt*itf);      	if(latb > latl) begin        	FCz		= latb-latl;        	FCxl		= 1.0+latl;        	FCxb		= 1.0+latb;        	if(latb > 0.01) begin        		FCln		= ln(FCxb/FCxl);        		FCa1		= exp((FCa_ck-1.0)*FCln);        		FCd_a		= 1.0/(latl-FCa1*latb);			FCw		= (FCa1-1.0)*FCd_a;        		FCa		= ln((1.0+latb*FCw)/(1.0+latl*FCw));        		FCdw_daick	= -FCz*FCa1*FCln*FCd_a*FCd_a;        		FClnb     	= ln(1.0+latb*FCw);            		FClnl     	= ln(1.0+latl*FCw);            		FCa1      	= FClnb - FClnl;            		FCda1_dw 	= latb/(1.0+latb*FCw) - latl/(1.0+latl*FCw);		end else begin        		FCf1		= 1.0-FCa_ck;        		FCd_a		= 1.0/(1.0-FCf1*latb);			FCw		= FCf1*FCd_a;        		FCa		= FCz*FCw;        		FCdw_daick	= -1.0*FCd_a*FCd_a;            		FClnb     	= latb*FCw;            		FClnl     	= latl*FCw;           		FCa1      	= FCz*FCw;            		FCda1_dw  	= FCz;		end        	FCf_CT		= 2.0/FCz;        	FCw2		= FCw*FCw;        	FCf1		= latb*latl*FCw*FCw2/3.0+(latb+latl)*FCw2/2.0+FCw;        	FCdf1_dw 	= latb*latl*FCw2 + (latb+latl)*FCw + 1.0;        	 z	= latb*FCw;      	if(z > 1.0e-6) begin        	x		= 1.0+z;        	a		= x*x;        	a2		= 0.250*(a*(2.0*FClnb-1.0)+1.0);        	a3		= (a*x*(3.0*FClnb-1.0)+1.0)/9.0;        	r		= latl/latb;        	FCf2		= ((1.0-r)*a2+r*a3)/latb;        	FCdf2_dw	= ((1.0-r)*x+r*a)*FClnb;      	end else begin        	a		= z*z;        	a2		= 3.0+z-0.5*a+z*a;        	a3		= -2.0*z+1.5*a+2.0*a*a/3.0;        	FCf2		= (latb*a2+latl*a3)*FCw*FCw/6.0;        	FCdf2_dw	= z+0.5*a-a*z/3.0+5.0*a*a/6.0+latl*FCw*(a-z+2.0*a*a/3.0);      	end        	 z	= latl*FCw;      	if(z > 1.0e-6) begin        	x		= 1.0+z;        	a		= x*x;        	a2		= 0.250*(a*(2.0*FClnl-1.0)+1.0);        	a3		= (a*x*(3.0*FClnl-1.0)+1.0)/9.0;        	r		= latb/latl;        	FCf3		= ((1.0-r)*a2+r*a3)/latl;        	FCdf3_dw	= ((1.0-r)*x+r*a)*FClnl;      	end else begin        	a		= z*z;        	a2		= 3.0+z-0.5*a+z*a;        	a3		= -2.0*z+1.5*a+2.0*a*a/3.0;        	FCf3		= (latl*a2+latb*a3)*FCw*FCw/6.0;        	FCdf3_dw	= z+0.5*a-a*z/3.0+5.0*a*a/6.0+latb*FCw*(a-z+2.0*a*a/3.0);      	end        	FCf_ci		= FCf_CT*(FCa*FCf1-FCf2+FCf3);        	FCdfc_dw	= FCf_CT*(FCa1*FCdf1_dw+FCda1_dw*FCf1-FCdf2_dw+FCdf3_dw);		FCdw_ditf	= FCdw_daick*FCdaick_ditf;		FCdfc_ditf	= FCdfc_dw*FCdw_ditf;        	 a = latb*FCw;    if (a > 1.0e-6) begin        FCf2   	= (a - FClnb)/latb;        FCdf2_dw 	= a / (1.0 + a);    end else begin        FCf2   	= 0.5 * a * FCw;        FCdf2_dw 	= a;    end        	 a = latl*FCw;    if (a > 1.0e-6) begin        FCf3   	= (a - FClnl)/latl;        FCdf3_dw 	= a / (1.0 + a);    end else begin        FCf3   	= 0.5 * a * FCw;        FCdf3_dw 	= a;    end		FCf_CT		= FCf_CT*(FCf2-FCf3);		FCdfCT_dw 	= FCf_CT*(FCdf2_dw-FCdf3_dw);		FCdfCT_ditf	= FCdfCT_dw*FCdw_ditf;	end else begin        	if(latb > 0.01) begin        		FCd_a		= 1.0/(1.0+FCa_ck*latb);        		FCw		= (1.0-FCa_ck)*FCd_a;        		FCdw_daick	= -(1.0+latb)*FCd_a*FCd_a;        	end else begin        		FCw		= 1.0-FCa_ck-FCa_ck*latb;        		FCdw_daick	= -(1.0+latb);        	end		FCw2		= FCw*FCw;        	FCz		= latb*FCw;        	FCz_1		= 1.0+FCz;        	FCd_f     	= 1.0/(FCz_1);        	FCf_ci		= FCw2*(1.0+FCz/3.0)*FCd_f;        	FCdfc_dw	= 2.0*FCw*(FCz_1+FCz*FCz/3.0)*FCd_f*FCd_f;		FCdw_ditf	= FCdw_daick*FCdaick_ditf;		FCdfc_ditf	= FCdfc_dw*FCdw_ditf;        	if (FCz > 0.001) begin            		FCf_CT    	= 2.0*(FCz_1*ln(FCz_1)-FCz)/(latb*latb*FCz_1);            		FCdfCT_dw 	= 2.0*FCw*FCd_f*FCd_f;       		end else begin            		FCf_CT    	= FCw2*(1.0-FCz/3.0)*FCd_f;            		FCdfCT_dw 	= 2.0*FCw*(1.0-FCz*FCz/3.0)*FCd_f*FCd_f;        	end		FCdfCT_ditf	= FCdfCT_dw*FCdw_ditf;     	end     	FFQ_cT	= FFQ_fC*FCf_CT;      	FFQ_fC	= FFQ_fC*FCf_ci;	FFT_fC	= FFT_pcS*(FCf_ci+itf*FCdfc_ditf);	FFT_cT	= FFT_pcS*(FCf_CT+itf*FCdfCT_ditf);	end        Qf		= Qf+FFd_QfB;        Tf		= Tf+FFd_TfB;        Q_fT		= Qf+hfe*FFd_QfE+hfc*FFQ_cT;        T_fT		= Tf+hfe*FFd_TfE+hfc*FFT_cT;        Qf		= Qf+FFd_QfE+FFQ_fC;        Tf		= Tf+FFd_TfE+FFT_fC;      end
+  			Qr	= Tr*itr;
+        		if(Oich == 0.0) 
+        			a	= 1.0+(T_fT*itf+Qr)/Q_pT;
+        		else
+       				a	= 1.0+(T_fT*I_Tf1*(1.0+2.0*a_h)+Qr)/Q_pT;
+        		d_Q	= -(Q_pT-(Q_0+Q_fT+Qr))/a;
+			
+        		a	= abs(0.3*Q_pT);
+        		if(abs(d_Q) > a) begin
+        			if (d_Q>=0)
+        				d_Q	= a;
+        			else 
+        				d_Q	= -a;
+        		end
+        		Q_pT	= Q_pT+d_Q;
+        		l_it	= l_it+1;
+		end 
+
+     		I_Tf1	= i_0f/Q_pT;       				
+     		a_h	= Oich*I_Tf1;
+      		itf	= I_Tf1*(1.0+a_h);
+      		itr	= i_0r/Q_pT;			
+      		
+      		
+      		Tf	= T_f0;
+      		Qf	= T_f0*itf;
+		 if(itf < 1.0e-6*ick) begin        Q_fT		= Qf;        T_fT		= Tf;      end else begin        FFa		= ick/itf;        FFd_TfE		= tef0_t*exp(-gtfe*ln(FFa));        FFd_QfE		= FFd_TfE*itf/(gtfe+1.0);        FFT_fbS		= (1.0-fthc)*thcs_t;        FFx		= 1.0-FFa;        FFs		= sqrt(FFx*FFx+alhc);        FFw		= (FFx+FFs)/(1.0+sqrt(1.0+alhc));        FFw_2		= FFw*FFw;        FFd_QfB		= FFT_fbS*itf*FFw_2;        FFa_w		= FFw_2*(1.0+2.0*FFa/FFs);        FFd_TfB		= FFT_fbS*FFa_w;        FFT_pcS		= fthc*thcs_t;        if(latb <= 0.0 && latl <= 0.0) begin          FFQ_fC	= FFT_pcS*itf*FFw_2;          FFT_fC	= FFT_pcS*FFa_w;          FFQ_cT	= FFQ_fC;          FFT_cT	= FFT_fC;        end else begin	   FFQ_fC		= FFT_pcS*itf;      	FCa		= 1.0-ick/itf;      	FCrt		= sqrt(FCa*FCa+alhc);      	FCa_ck		= 1.0-(FCa+FCrt)/(1.0+sqrt(1.0+alhc));      	FCdaick_ditf	= (FCa_ck-1.0)*(1-FCa)/(FCrt*itf);      	if(latb > latl) begin        	FCz		= latb-latl;        	FCxl		= 1.0+latl;        	FCxb		= 1.0+latb;        	if(latb > 0.01) begin        		FCln		= ln(FCxb/FCxl);        		FCa1		= exp((FCa_ck-1.0)*FCln);        		FCd_a		= 1.0/(latl-FCa1*latb);			FCw		= (FCa1-1.0)*FCd_a;        		FCa		= ln((1.0+latb*FCw)/(1.0+latl*FCw));        		FCdw_daick	= -FCz*FCa1*FCln*FCd_a*FCd_a;        		FClnb     	= ln(1.0+latb*FCw);            		FClnl     	= ln(1.0+latl*FCw);            		FCa1      	= FClnb - FClnl;            		FCda1_dw 	= latb/(1.0+latb*FCw) - latl/(1.0+latl*FCw);		end else begin        		FCf1		= 1.0-FCa_ck;        		FCd_a		= 1.0/(1.0-FCf1*latb);			FCw		= FCf1*FCd_a;        		FCa		= FCz*FCw;        		FCdw_daick	= -1.0*FCd_a*FCd_a;            		FClnb     	= latb*FCw;            		FClnl     	= latl*FCw;           		FCa1      	= FCz*FCw;            		FCda1_dw  	= FCz;		end        	FCf_CT		= 2.0/FCz;        	FCw2		= FCw*FCw;        	FCf1		= latb*latl*FCw*FCw2/3.0+(latb+latl)*FCw2/2.0+FCw;        	FCdf1_dw 	= latb*latl*FCw2 + (latb+latl)*FCw + 1.0;        	 z	= latb*FCw;      	if(z > 1.0e-6) begin        	x		= 1.0+z;        	a		= x*x;        	a2		= 0.250*(a*(2.0*FClnb-1.0)+1.0);        	a3		= (a*x*(3.0*FClnb-1.0)+1.0)/9.0;        	r		= latl/latb;        	FCf2		= ((1.0-r)*a2+r*a3)/latb;        	FCdf2_dw	= ((1.0-r)*x+r*a)*FClnb;      	end else begin        	a		= z*z;        	a2		= 3.0+z-0.5*a+z*a;        	a3		= -2.0*z+1.5*a+2.0*a*a/3.0;        	FCf2		= (latb*a2+latl*a3)*FCw*FCw/6.0;        	FCdf2_dw	= z+0.5*a-a*z/3.0+5.0*a*a/6.0+latl*FCw*(a-z+2.0*a*a/3.0);      	end        	 z	= latl*FCw;      	if(z > 1.0e-6) begin        	x		= 1.0+z;        	a		= x*x;        	a2		= 0.250*(a*(2.0*FClnl-1.0)+1.0);        	a3		= (a*x*(3.0*FClnl-1.0)+1.0)/9.0;        	r		= latb/latl;        	FCf3		= ((1.0-r)*a2+r*a3)/latl;        	FCdf3_dw	= ((1.0-r)*x+r*a)*FClnl;      	end else begin        	a		= z*z;        	a2		= 3.0+z-0.5*a+z*a;        	a3		= -2.0*z+1.5*a+2.0*a*a/3.0;        	FCf3		= (latl*a2+latb*a3)*FCw*FCw/6.0;        	FCdf3_dw	= z+0.5*a-a*z/3.0+5.0*a*a/6.0+latb*FCw*(a-z+2.0*a*a/3.0);      	end        	FCf_ci		= FCf_CT*(FCa*FCf1-FCf2+FCf3);        	FCdfc_dw	= FCf_CT*(FCa1*FCdf1_dw+FCda1_dw*FCf1-FCdf2_dw+FCdf3_dw);		FCdw_ditf	= FCdw_daick*FCdaick_ditf;		FCdfc_ditf	= FCdfc_dw*FCdw_ditf;        	 a = latb*FCw;    if (a > 1.0e-6) begin        FCf2   	= (a - FClnb)/latb;        FCdf2_dw 	= a / (1.0 + a);    end else begin        FCf2   	= 0.5 * a * FCw;        FCdf2_dw 	= a;    end        	 a = latl*FCw;    if (a > 1.0e-6) begin        FCf3   	= (a - FClnl)/latl;        FCdf3_dw 	= a / (1.0 + a);    end else begin        FCf3   	= 0.5 * a * FCw;        FCdf3_dw 	= a;    end		FCf_CT		= FCf_CT*(FCf2-FCf3);		FCdfCT_dw 	= FCf_CT*(FCdf2_dw-FCdf3_dw);		FCdfCT_ditf	= FCdfCT_dw*FCdw_ditf;	end else begin        	if(latb > 0.01) begin        		FCd_a		= 1.0/(1.0+FCa_ck*latb);        		FCw		= (1.0-FCa_ck)*FCd_a;        		FCdw_daick	= -(1.0+latb)*FCd_a*FCd_a;        	end else begin        		FCw		= 1.0-FCa_ck-FCa_ck*latb;        		FCdw_daick	= -(1.0+latb);        	end		FCw2		= FCw*FCw;        	FCz		= latb*FCw;        	FCz_1		= 1.0+FCz;        	FCd_f     	= 1.0/(FCz_1);        	FCf_ci		= FCw2*(1.0+FCz/3.0)*FCd_f;        	FCdfc_dw	= 2.0*FCw*(FCz_1+FCz*FCz/3.0)*FCd_f*FCd_f;		FCdw_ditf	= FCdw_daick*FCdaick_ditf;		FCdfc_ditf	= FCdfc_dw*FCdw_ditf;        	if (FCz > 0.001) begin            		FCf_CT    	= 2.0*(FCz_1*ln(FCz_1)-FCz)/(latb*latb*FCz_1);            		FCdfCT_dw 	= 2.0*FCw*FCd_f*FCd_f;       		end else begin            		FCf_CT    	= FCw2*(1.0-FCz/3.0)*FCd_f;            		FCdfCT_dw 	= 2.0*FCw*(1.0-FCz*FCz/3.0)*FCd_f*FCd_f;        	end		FCdfCT_ditf	= FCdfCT_dw*FCdw_ditf;     	end     	FFQ_cT	= FFQ_fC*FCf_CT;      	FFQ_fC	= FFQ_fC*FCf_ci;	FFT_fC	= FFT_pcS*(FCf_ci+itf*FCdfc_ditf);	FFT_cT	= FFT_pcS*(FCf_CT+itf*FCdfCT_ditf);	end        Qf		= Qf+FFd_QfB;        Tf		= Tf+FFd_TfB;        Q_fT		= Qf+hfe*FFd_QfE+hfc*FFQ_cT;        T_fT		= Tf+hfe*FFd_TfE+hfc*FFT_cT;        Qf		= Qf+FFd_QfE+FFQ_fC;        Tf		= Tf+FFd_TfE+FFT_fC;      end
+      		Qr	= Tr*itr;
+	
+	end 
+	
+	
+
+     	it	= itf-itr;
+
+	
+      	Qdei	= Qf;
+      	Qdci	= Qr;
+
+	
+	
+ 	qrbi	= fcrbi*(Qjei+Qdei+Qjci+Qdci);
+ 	
+	
+	
+	
+	 DIOY	= V(bi,ci)/(mbci*VT);	if (ibcis > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		ibci	= ibcis_t*(le-1.0);		if(DIOY <= -14.0) begin			ibci	= -ibcis_t;		end	end else begin		ibci	= 0.0;        end
+
+	
+	 if(V(bi,ci) < 0.0 && favl_t > 0.0 && cjci0_t > 0.0) begin            AVLv_bord	= vdci_t-V(bi,ci);            AVLv_q	= qavl_t/Cjci;            AVLU0	= qavl_t/cjci0_t;            if(AVLv_bord > AVLU0) begin              		AVLa	= favl_t*exp(-AVLv_q/AVLU0);              		AVLS_avl= AVLa*(AVLU0+(1.0+AVLv_q/AVLU0)*(AVLv_bord-AVLU0));            end else begin            		AVLS_avl	= favl_t*AVLv_bord*exp(-AVLv_q/AVLv_bord);            end            iavl	= itf*AVLS_avl;      end else begin      	    iavl	= 0.0;      end
+
+	
+	 if(rbi0_t > 0.0) begin      	f_QR	= (1+fdqr0)*qp0_t;        Qz	= Qjei+Qf;	if(Qf > 0.0) begin        	Q_fi	= Qf*fqi;        	f_p	= (Qjei+Q_fi)/Qz;        end else begin        	f_p	= 1.0;        end        rbi	= rbi0_t*f_QR/(f_QR+Qz);        I_BI	= ibei;	if( I_BI >= 1.0e-20) begin      		ETA	= rbi*I_BI*fgeo/VT;      		if(ETA >= 1.0e-3) begin      			if(ETA < 0.02)        			rbi	= rbi*(1.0-0.5*ETA);      			else        			rbi	= rbi*ln(1.0+ETA)/ETA;      		end      	end      	rbi	= rbi*f_p;   end else begin   	rbi	= 0.0;   end
+
+	
+	 DIOY	= V(bp,ei)/(mbep*VT);	if (ibeps > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		ibep	= ibeps_t*(le-1.0);		if(DIOY <= -14.0) begin			ibep	= -ibeps_t;		end	end else begin		ibep	= 0.0;        end
+	 DIOY	= V(bp,ei)/(mrep*VT);	if (ireps > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		irep	= ireps_t*(le-1.0);		if(DIOY <= -14.0) begin			irep	= -ireps_t;		end	end else begin		irep	= 0.0;        end
+
+	
+	 if(cjep0_t > 0.0) begin      DFV_f	= vdep_t*(1.0-exp(-ln(aljep_t)/zep));      DFC_max	= aljep_t*cjep0_t;      DFv_e	= (DFV_f-V(bp,ei))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(bp,ei);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vdep_t);      DFC_j1	= cjep0_t*exp(-zep*DFb)*DFdvj_dv;      Cjep		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjep0_t*vdep_t*(1.0-exp(DFb*(1.0-zep)))/(1.0-zep);      Qjep	= DFQ_j+DFC_max*(V(bp,ei)-DFv_j);  end else begin      Cjep		= 0.0;      Qjep	= 0.0;  end
+
+	
+	
+	 if(V(bp,ei) < 0.0) begin		if(cjep0 > 0.0) begin			a_eg    = (vgb-2.55e-4*Tnom)/(vgb-2.55e-4*Tdev);			ab	= (cjep0_t/cjep0)*sqrt(a_eg)*vdep_t*vdep_t/(vdep*vdep);			ibets_t	= ibets*ab;		end else begin			ibets_t	= ibets;		end		vve	= -V(bp,ei)/vdep_t;		cce	= Cjep/cjep0_t;		zex	= 1.0/zep;		pocce	= exp((1-zex)*ln(cce));		czz	= ibets_t*vve*pocce;		ibet	= czz*exp(-abet/pocce);	end else begin		ibet	= 0.0;	end
+
+	
+	 if(vptcx_t <  1.0e2) begin		 if(cjcx02_t > 0.0) begin      Dz_r	= zcx/4.0;      Dv_p	= vptcx_t-vdcx_t;      DV_f	= vdcx_t*(1.0-exp(-ln(2.4)/zcx));      DC_max	= 2.4*cjcx02_t;      DC_c	= cjcx02_t*exp(ln(vptcx_t/vdcx_t)*(Dz_r-zcx));      Da	= VT;      Dv_e	= (DV_f-V(bp,ci))/Da;      if(Dv_e <  80.0) begin        De	= exp(Dv_e);        De_1	= De/(1.0+De);        Dv_j1	= DV_f-Da*ln(1.0+De);      end else begin        De_1	= 1.0;        Dv_j1	= V(bp,ci);      end      Da	= 0.1*Dv_p+4.0*VT;      Dv_r	= (Dv_p+Dv_j1)/Da;      if(Dv_r <  80.0) begin       	De	= exp(Dv_r);       	De_2	= De/(1.0+De);       	Dv_j2	= -Dv_p+Da*ln(1.0+De);      end else begin       	De_2	= 1.0;       	Dv_j2	= Dv_j1;      end      Dv_j4	= V(bp,ci)-Dv_j1;      DCln1	= ln(1.0-Dv_j1/vdcx_t);      DCln2	= ln(1.0-Dv_j2/vdcx_t);      Dz1	= 1.0-zcx;      Dzr1	= 1.0-Dz_r;      DC_j1	= cjcx02_t*exp(DCln2*(-zcx))*De_1*De_2;      DC_j2	= DC_c*exp(DCln1*(-Dz_r))*(1.0-De_2);      DC_j3	= DC_max*(1.0-De_1);      cjcx0_t_ii		= DC_j1+DC_j2+DC_j3;      DQ_j1	= cjcx02_t*(1.0-exp(DCln2*Dz1))/Dz1;      DQ_j2	= DC_c*(1.0-exp(DCln1*Dzr1))/Dzr1;      DQ_j3	= DC_c*(1.0-exp(DCln2*Dzr1))/Dzr1;      qjcx0_t_ii	= (DQ_j1+DQ_j2-DQ_j3)*vdcx_t+DC_max*Dv_j4;  end else begin      cjcx0_t_ii		= 0.0;      qjcx0_t_ii	= 0.0;  end	end else begin		 if(cjcx02_t > 0.0) begin      DFV_f	= vdcx_t*(1.0-exp(-ln(2.4)/zcx));      DFC_max	= 2.4*cjcx02_t;      DFv_e	= (DFV_f-V(bp,ci))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(bp,ci);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vdcx_t);      DFC_j1	= cjcx02_t*exp(-zcx*DFb)*DFdvj_dv;      cjcx0_t_ii		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjcx02_t*vdcx_t*(1.0-exp(DFb*(1.0-zcx)))/(1.0-zcx);      qjcx0_t_ii	= DFQ_j+DFC_max*(V(bp,ci)-DFv_j);  end else begin      cjcx0_t_ii		= 0.0;      qjcx0_t_ii	= 0.0;  end	end
+
+	
+	 DIOY	= V(bp,ci)/(mbcx*VT);	if (ibcxs > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		ijbcx	= ibcxs_t*(le-1.0);		if(DIOY <= -14.0) begin			ijbcx	= -ibcxs_t;		end	end else begin		ijbcx	= 0.0;        end
+
+	
+	 if(vptcx_t <  1.0e2) begin		 if(cjcx01_t > 0.0) begin      Dz_r	= zcx/4.0;      Dv_p	= vptcx_t-vdcx_t;      DV_f	= vdcx_t*(1.0-exp(-ln(2.4)/zcx));      DC_max	= 2.4*cjcx01_t;      DC_c	= cjcx01_t*exp(ln(vptcx_t/vdcx_t)*(Dz_r-zcx));      Da	= VT;      Dv_e	= (DV_f-V(b,ci))/Da;      if(Dv_e <  80.0) begin        De	= exp(Dv_e);        De_1	= De/(1.0+De);        Dv_j1	= DV_f-Da*ln(1.0+De);      end else begin        De_1	= 1.0;        Dv_j1	= V(b,ci);      end      Da	= 0.1*Dv_p+4.0*VT;      Dv_r	= (Dv_p+Dv_j1)/Da;      if(Dv_r <  80.0) begin       	De	= exp(Dv_r);       	De_2	= De/(1.0+De);       	Dv_j2	= -Dv_p+Da*ln(1.0+De);      end else begin       	De_2	= 1.0;       	Dv_j2	= Dv_j1;      end      Dv_j4	= V(b,ci)-Dv_j1;      DCln1	= ln(1.0-Dv_j1/vdcx_t);      DCln2	= ln(1.0-Dv_j2/vdcx_t);      Dz1	= 1.0-zcx;      Dzr1	= 1.0-Dz_r;      DC_j1	= cjcx01_t*exp(DCln2*(-zcx))*De_1*De_2;      DC_j2	= DC_c*exp(DCln1*(-Dz_r))*(1.0-De_2);      DC_j3	= DC_max*(1.0-De_1);      cjcx0_t_i		= DC_j1+DC_j2+DC_j3;      DQ_j1	= cjcx01_t*(1.0-exp(DCln2*Dz1))/Dz1;      DQ_j2	= DC_c*(1.0-exp(DCln1*Dzr1))/Dzr1;      DQ_j3	= DC_c*(1.0-exp(DCln2*Dzr1))/Dzr1;      qjcx0_t_i	= (DQ_j1+DQ_j2-DQ_j3)*vdcx_t+DC_max*Dv_j4;  end else begin      cjcx0_t_i		= 0.0;      qjcx0_t_i	= 0.0;  end	end else begin		 if(cjcx01_t > 0.0) begin      DFV_f	= vdcx_t*(1.0-exp(-ln(2.4)/zcx));      DFC_max	= 2.4*cjcx01_t;      DFv_e	= (DFV_f-V(b,ci))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(b,ci);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vdcx_t);      DFC_j1	= cjcx01_t*exp(-zcx*DFb)*DFdvj_dv;      cjcx0_t_i		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjcx01_t*vdcx_t*(1.0-exp(DFb*(1.0-zcx)))/(1.0-zcx);      qjcx0_t_i	= DFQ_j+DFC_max*(V(b,ci)-DFv_j);  end else begin      cjcx0_t_i		= 0.0;      qjcx0_t_i	= 0.0;  end	end
+
+	
+	 if(vpts_t <  1.0e2) begin		 if(cjs0_t > 0.0) begin      Dz_r	= zs/4.0;      Dv_p	= vpts_t-vds_t;      DV_f	= vds_t*(1.0-exp(-ln(2.4)/zs));      DC_max	= 2.4*cjs0_t;      DC_c	= cjs0_t*exp(ln(vpts_t/vds_t)*(Dz_r-zs));      Da	= VT;      Dv_e	= (DV_f-V(si,ci))/Da;      if(Dv_e <  80.0) begin        De	= exp(Dv_e);        De_1	= De/(1.0+De);        Dv_j1	= DV_f-Da*ln(1.0+De);      end else begin        De_1	= 1.0;        Dv_j1	= V(si,ci);      end      Da	= 0.1*Dv_p+4.0*VT;      Dv_r	= (Dv_p+Dv_j1)/Da;      if(Dv_r <  80.0) begin       	De	= exp(Dv_r);       	De_2	= De/(1.0+De);       	Dv_j2	= -Dv_p+Da*ln(1.0+De);      end else begin       	De_2	= 1.0;       	Dv_j2	= Dv_j1;      end      Dv_j4	= V(si,ci)-Dv_j1;      DCln1	= ln(1.0-Dv_j1/vds_t);      DCln2	= ln(1.0-Dv_j2/vds_t);      Dz1	= 1.0-zs;      Dzr1	= 1.0-Dz_r;      DC_j1	= cjs0_t*exp(DCln2*(-zs))*De_1*De_2;      DC_j2	= DC_c*exp(DCln1*(-Dz_r))*(1.0-De_2);      DC_j3	= DC_max*(1.0-De_1);      Cjs		= DC_j1+DC_j2+DC_j3;      DQ_j1	= cjs0_t*(1.0-exp(DCln2*Dz1))/Dz1;      DQ_j2	= DC_c*(1.0-exp(DCln1*Dzr1))/Dzr1;      DQ_j3	= DC_c*(1.0-exp(DCln2*Dzr1))/Dzr1;      Qjs	= (DQ_j1+DQ_j2-DQ_j3)*vds_t+DC_max*Dv_j4;  end else begin      Cjs		= 0.0;      Qjs	= 0.0;  end	end else begin		 if(cjs0_t > 0.0) begin      DFV_f	= vds_t*(1.0-exp(-ln(2.4)/zs));      DFC_max	= 2.4*cjs0_t;      DFv_e	= (DFV_f-V(si,ci))/VT;      if(DFv_e <  80.0) begin      		DFe	= exp(DFv_e);      		DFv_j	= DFV_f-VT*ln(1.0+DFe);      		DFdvj_dv= DFe/(1.0+DFe);      end else begin      		DFv_j	= V(si,ci);      		DFdvj_dv= 1;      end      DFb	= ln(1.0-DFv_j/vds_t);      DFC_j1	= cjs0_t*exp(-zs*DFb)*DFdvj_dv;      Cjs		= DFC_j1+DFC_max*(1.0-DFdvj_dv);      DFQ_j	= cjs0_t*vds_t*(1.0-exp(DFb*(1.0-zs)))/(1.0-zs);      Qjs	= DFQ_j+DFC_max*(V(si,ci)-DFv_j);  end else begin      Cjs		= 0.0;      Qjs	= 0.0;  end	end
+
+	
+ 	if(itss > 0.0) begin
+ 		HSUM	= msf*VT;
+        	HSa	= limexp(V(bp,ci)/HSUM);
+        	HSb	= limexp(V(si,ci)/HSUM);
+        	HSI_Tsu	= itss_t*(HSa-HSb);
+        	if(tsf > 0.0) begin
+       	 		Qdsu	= tsf_t*itss_t*HSa;
+      		end else begin
+        		Qdsu	= 0.0;
+       		end
+      	end else begin
+        	HSI_Tsu	= 0.0;
+        	Qdsu	= 0.0;
+      	end
+     
+	
+	 DIOY	= V(si,ci)/(msc*VT);	if (iscs > 0.0) begin		if (DIOY >  80.0) begin			le 	= (1 + (DIOY -  80.0));			DIOY	=  80.0;		end else begin			le	= 1;		end  		le 	= le*limexp(DIOY);		ijsc	= iscs_t*(le-1.0);		if(DIOY <= -14.0) begin			ijsc	= -iscs_t;		end	end else begin		ijsc	= 0.0;        end
+
+	
+	if (rth > 0.0) begin
+		pterm	=  V(ci,ei)*it + (vdci_t-V(bi,ci))*iavl;
+	end	
+
+	
+	
+	
+	
+	
+	I(bp,ei) 	<+ -ibet+ibep+irep;
+	I(bi,ei) 	<+ ibei+irei;
+	I(bp,si) 	<+ HSI_Tsu;
+	I(bp,ci) 	<+ ijbcx;
+	I(bi,ci) 	<+ ibci-iavl;
+	I(si,ci) 	<+ ijsc;
+	I(ci,ei) 	<+ it;
+
+   	I(b,ci)      	<+ ddt(ccox1*V(b,ci));
+	I(bp,ci)        <+ ddt(ccox2*V(bp,ci));	
+	I(bp,e)  	<+ ddt(ceox*V(bp,e));		
+
+	I(si,ci)	<+ ddt(Qjs);
+	I(bp,ei)	<+ ddt(Qjep);
+	I(bi,ei) 	<+ ddt(Qdei+Qjei);	
+	I(bp,ci)	<+ ddt(qjcx0_t_ii+Qdsu);
+	I(bi,ci)	<+ ddt(Qdci+Qjci);
+	I(b,ci)		<+ ddt(qjcx0_t_i);
+	
+	if (rbx > 0.0) begin
+		I(iresbx)	<+ V(iresbx)/rbx_t;
+	end else begin
+		I(iresbx)	<+ V(iresbx)/1e-6;
+		
+	end
+	if(rbi0 > 0.0) begin
+		I(irescb)	<+ V(irescb)/rbi;
+		I(irescb) 	<+ ddt(qrbi);
+	end else begin
+		I(irescb)	<+ V(irescb)/1e-6;
+		
+	end
+	if (rcx > 0.0) begin
+		I(irescx)	<+ V(irescx)/rcx_t;
+	end else begin
+		I(irescx)	<+ V(irescx)/1e-6;
+		
+	end
+	if (re > 0.0) begin
+		I(iresex)	<+ V(iresex)/re_t;
+	end else begin
+		I(iresex)	<+ V(iresex)/1e-6;
+		
+	end	
+	if(rsu > 0.0) begin
+		I(irescs)  	<+ V(irescs)/rsu;
+		I(irescs)	<+ ddt(csu*V(irescs));
+	end else begin
+		I(irescs)  	<+ V(irescs)/1e-6;
+		
+	end
+	if(rth > 0.0) begin
+		I(tnode) 	<+ V(tnode)/rth;
+		I(tnode)	<+ -pterm;
+		I(tnode) 	<+ ddt(cth*V(tnode));
+	end else begin
+		I(tnode) 	<+ V(tnode)/1e-6;
+		
+	end
+	
+	
+	
+	
+	
+	fourkt 	= 4.0 *  1.3806503e-23 * Tdev;
+	if(rbx > 0.0)
+		I(iresbx)	<+ white_noise(fourkt/rbx_t,	"thermal");
+	if(rbi0 > 0.0) begin
+		rbin      	=  krbi * rbi;
+		I(irescb) 	<+ white_noise(fourkt/rbin,	"thermal");
+	end
+	if(rcx > 0.0)
+		I(irescx)	<+ white_noise(fourkt/rcx_t,	"thermal");
+	if(re > 0.0)
+		I(iresex)	<+ white_noise(fourkt/re_t,	"thermal");
+	if(rsu > 0.0)
+		I(irescs)	<+ white_noise(fourkt/rsu,	"thermal");
+	
+	
+   	flicker_Pwr  	= kf*pow((ibei+ibep),af);
+   	I(bi,ei) 	<+ flicker_noise(flicker_Pwr,1.0);
+
+   	
+   	twoq	= 2.0 *  1.602176462e-19;
+   	I(ci,ei) 	<+ white_noise(twoq*it,		"shot");
+   	I(ci,bi) 	<+ white_noise(twoq*iavl,	"shot");
+ 	I(bi,ei) 	<+ white_noise(twoq*ibei,	"shot");
+  	I(bi,ci) 	<+ white_noise(twoq*ibci,	"shot");
+	I(bp,ei) 	<+ white_noise(twoq*ibep,	"shot");
+  	I(bp,ci) 	<+ white_noise(twoq*ijbcx,	"shot");
+  	I(si,ci) 	<+ white_noise(twoq*ijsc,	"shot");
+  	
+	
+	
+	
+
+
+end 
+endmodule

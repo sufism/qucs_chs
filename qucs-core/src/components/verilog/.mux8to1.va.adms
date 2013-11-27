@@ -1,0 +1,133 @@
+# 1 "./mux8to1.va"
+
+
+
+
+
+
+
+
+
+
+
+# 1 "disciplines.vams"
+
+
+
+
+
+
+nature Current
+ access=I;
+ units="A";
+ abstol=1e-12;
+endnature
+
+nature Voltage
+ access=V;
+ units="V";
+ abstol=1e-6;
+endnature
+
+discipline electrical
+ potential Voltage;
+ flow      Current;
+enddiscipline
+
+nature Temperature
+ access=Temp;
+ units="C";
+ abstol=1e-4;
+endnature
+
+nature Power
+ access=Pwr;
+ units="W";
+ abstol=1e-9;
+endnature
+
+discipline thermal
+ potential Temperature;
+ flow      Power;
+enddiscipline
+# 13 "./mux8to1.va"
+# 1 "constants.vams"
+
+
+
+
+
+
+
+# 10 "constants.vams"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 14 "./mux8to1.va"
+module mux8to1 (EN, A, B, C, D0, D1, D2, D3, D4, D5, D6, D7, Y); 
+ inout EN, A, B, C, D0, D1, D2, D3, D4, D5, D6, D7, Y;
+ electrical EN, A, B, C, D0, D1, D2, D3, D4, D5, D6, D7, Y;
+ electrical n1, n2;
+
+
+ parameter real TR=6 from [1.0:20.0]  (*info="transfer function high scaling factor"*);
+ parameter real Delay = 1e-9 from [0: inf]  (*info="output delay" unit="s"*);
+
+ real Rd, Cd, In1, VAI, VBI, VCI, m0, m1, m2, m3, m4, m5, m6, m7;
+
+analog begin
+@(initial_model)
+  begin
+    Rd = 1e3;
+    Cd= Delay*1.43/Rd;
+  end
+VAI = 1-V(A);
+VBI = 1-V(B);
+VCI = 1-V(C);
+m0 = V(D0)*VCI*VBI*VAI;
+m1 = V(D1)*VCI*VBI*V(A);
+m2 = V(D2)*VCI*V(B)*VAI;
+m3 = V(D3)*VCI*V(B)*V(A);
+m4 = V(D4)*V(C)*VBI*VAI;
+m5 = V(D5)*V(C)*VBI*V(A);
+m6 = V(D6)*V(C)*V(B)*VAI;
+m7 = V(D7)*V(C)*V(B)*V(A);
+In1 = (1-V(EN))*(m0+m1+m2+m3+m4+m5+m6+m7);
+I(n1) <+ -0.5*(1+tanh(TR*(In1-0.5)));
+I(n1) <+ V(n1);
+I(n1, n2) <+ V(n1,n2)/Rd;
+I(n2) <+ ddt(Cd*V(n2));
+I(Y)  <+ -V(n2);
+I(Y) <+ V(Y);
+end
+endmodule
