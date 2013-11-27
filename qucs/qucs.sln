@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucs", "qucs.vcproj", "{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}.Debug|Win32.Build.0 = Debug|Win32
+		{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}.Release|Win32.ActiveCfg = Release|Win32
+		{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

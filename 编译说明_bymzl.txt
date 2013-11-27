@@ -1,0 +1,74 @@
+1>MOC'ing qucstrans.h ...
+1>'\bin\moc' 不是内部或外部命令，也不是可运行的程序
+1>或批处理文件。
+1>Project : error PRJ0019: 某个工具从以下位置返回了错误代码: "MOC'ing qucstrans.h ..."
+
+:这是由于工程中%QtDir%变量找不到的缘故，
+方案1:将工程文件中所有%QTDIR%以及$(QTDIR)都替换成C:\Qt\4.6.2
+方案2：在windows中增加一个环境变量QTDir，将其值设置为C:\Qt\4.6.2
+
+1>e:\test\qucs-0.0.17\qucs-transcalc\qucstrans.h(21) : fatal error C1083: 无法打开包括文件:“QDialog”: No such file or directory
+1>qucstrans.cpp
+1>e:\test\qucs-0.0.17\qucs-transcalc\qucstrans.cpp(22) : fatal error C1083: 无法打开包括文件:“QDate”: No such file or directory
+1>optionsdialog.moc.cpp
+1>e:\test\qucs-0.0.17\qucs-transcalc\optionsdialog.h(21) : fatal error C1083: 无法打开包括文件:“QDialog”: No such file or directory
+1>optionsdialog.cpp
+1>e:\test\qucs-0.0.17\qucs-transcalc\optionsdialog.cpp(22) : fatal error C1083: 无法打开包括文件:“QGroupBox”: No such file or directory
+1>main.cpp
+1>e:\test\qucs-0.0.17\qucs-transcalc\main.cpp(24) : fatal error C1083: 无法打开包括文件:“QApplication”: No such file or directory
+1>helpdialog.moc.cpp
+1>e:\test\qucs-0.0.17\qucs-transcalc\helpdialog.h(21) : fatal error C1083: 无法打开包括文件:“QDialog”: No such file or directory
+1>helpdialog.cpp
+1>e:\test\qucs-0.0.17\qucs-transcalc\helpdialog.cpp(22) : fatal error C1083: 无法打开包括文件:“QPushButton”: No such file or directory
+
+:这显然是由于包含文件路径没有加上。生成的工程中只包括了C:\Qt\4.6.2/include，却没有包含C:\Qt\4.6.2/include下面一系列的子目录
+方案：在包含路径中加上$(QTDIR)\include\QtCore,$(QTDIR)\include\QtGUI,$(QTDIR)\include\Qt,$(QTDIR)\include\Qt3Support
+
+1>LINK : fatal error LNK1104: 无法打开文件“qt-mt3.lib”
+
+:这个貌似是qt3里面的库？
+方案：将工程设置中qt-mt3.lib替换成 QtCore4.lib QtGui.lib。另外由于编译出的qt库是分Debug和Release版的，在Debug版中依赖库应该是qtmaind.lib QtCored4.lib QtGuid4.lib
+
+>qf_poly (qf_double_t, qf_double_t, qf_double_t, unsigned)定义找不到之类的错误
+
+:猜测是linux下的换行符windows下面不认识
+方案：在头文件里面敲回车，把定义从注释后面挪出来
+
+1>e:\test\qucs-0.0.17\qucs\components\ac_sim.cpp(27) : error C2039: “find”: 不是“QString”的成员
+
+：好像这个函数是qt3的
+方案：在工程中加入宏QT3_SUPPORT
+
+
+1>e:\test\qucs-0.0.17\qucs\schematic_file.cpp(1269) : error C2110: “+”: 不能添加两个指针
+
+:出错的地方在这里：          (*it_name) += " " + ((*it_type).isEmpty() ?     VHDL_SIGNAL_TYPE : (*it_type));
+方案：改成          (*it_name) += QString(" ") + ( ((*it_type).isEmpty() ?  VHDL_SIGNAL_TYPE : (*it_type)) );
+
+
+1>e:\test\qucs-0.0.17\qucs\schematic.cpp(125) : fatal error C1021: 无效的预处理器命令“warning”
+
+:查了msdn好像vc不支持#warning?
+方案：将#warning那行注释掉
+
+1>e:\test\qucs-0.0.17\qucs\dialogs\labeldialog.cpp(50) : error C2664: “QRegExpValidator::QRegExpValidator(QObject *)”: 不能将参数 1 从“QRegExp”转换为“QObject *”
+
+：猜测是函数默认参数的写法和windows下不一样？
+方案：将Validator1 = new QRegExpValidator(Expr1);改成Validator1 = new QRegExpValidator(Expr1,NULL);
+
+1>libcomponents.lib(spicedialog.obj) : error LNK2001: 无法解析的外部符号 "__declspec(dllimport) public: virtual __thiscall Q3TextStream::~Q3TextStream(void)" (__imp_??1Q3TextStream@@UAE@XZ)
+1>libcomponents.lib(libcomp.obj) : error LNK2001: 无法解析的外部符号 "__declspec(dllimport) public: virtual __thiscall Q3TextStream::~Q3TextStream(void)" (__imp_??1Q3TextStream@@UAE@XZ)
+1>libcomponents.lib(opt_sim.obj) : error LNK2001: 无法解析的外部符号 "__declspec(dllimport) public: virtual __thiscall Q3TextStream::~Q3TextStream(void)" (__imp_??1Q3TextStream@@UAE@XZ)
+
+方案：在工程中加入Qt3Supportd4.lib
+
+4>e:\test\qucs-0.0.17\qucs-core\src\logging.h(35) : error C2065: “nr_double_t”: 未声明的标识符
+4>e:\test\qucs-0.0.17\qucs-core\src\logging.h(35) : error C2065: “nr_double_t”: 未声明的标识符
+
+:nr_double_t这个定义找了半天找不着，网上也没有查到。最后只好自己定义了
+方案：在config.h中加一句typedef double nr_double_t;
+
+1>e:\test\qucs-0.0.17\qucs-core\src\converter\touchstone_producer.cpp(26) : fatal error C1083: 无法打开包括文件:“config.h”: No such file or directory
+
+:这个仿佛是因为包含路径里面少一级
+方案：原有的包含路径无论最上层是哪一层，都在这一层后面再加一个/..

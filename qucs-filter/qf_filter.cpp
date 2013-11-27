@@ -48,14 +48,14 @@ qf_filter::qf_filter (int n = 3, qfk k = UNDEF, qft t = LOWPASS) :
   ncomp (0), Comp (NULL) {
 }
 
-qf_filter::qf_filter (qfk k = UNDEF, qft t = LOWPASS, qf_double_t r = 1,
-		      qf_double_t f = 1, qf_double_t b = 0) :
+qf_filter::qf_filter (qfk k/* = UNDEF*/, qft t /*= LOWPASS*/, qf_double_t r /*= 1*/,
+		      qf_double_t f /*= 1*/, qf_double_t b /*= 0*/) :
   type (t), kind (k), fc (f), bw (b), imp (r), ncomp (0), Comp (NULL) {
   fstart = fc - bw / 2;
   fstop  = fc + bw / 2;
 }
 
-qf_filter::qf_filter (qfk k = UNDEF, qft t = LOWPASS) :
+qf_filter::qf_filter (qfk k /*= UNDEF*/, qft t /*= LOWPASS*/) :
   type (t), kind (k), ord (0), fc (0), bw (0), imp (1),
   ncomp (0), Comp (NULL) {
 }
@@ -125,7 +125,7 @@ std::string qf_filter::num2str (qf_double_t num) {
         case  4: c = 'T'; break;
       }
 
-    if(c) num /= pow(10.0, (qf_double_t)(3*expo));
+    if(c) num /= pow((qf_double_t)10.0, (qf_double_t)(3*expo));
   }
 
   std::stringstream str;
