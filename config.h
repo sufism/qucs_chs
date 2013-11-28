@@ -19,6 +19,12 @@
 #define _GNU_SOURCE 1
 #endif
 
+typedef double nr_double_t;
+typedef int nr_int32_t;
+typedef short nr_int16_t;
+#define NR_DOUBLE_SIZE 8
+#pragma warning(disable:4996)
+
 /* Where the binary files go. */
 #define BINARYDIR "/usr/local/bin/"
 

@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="libqucsator"
 	ProjectGUID="{491DC8F2-C9E5-4961-9C59-55F62D45D8A0}"
+	RootNamespace="libqucsator"
 	TargetFrameworkVersion="0"
 	>
 	<Platforms>
@@ -116,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..,../..,math"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;DEBUG"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;DEBUG;HAVE_STRCHR"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Dbg/libqucsator.pch"
 				AssemblerListingLocation=".\Dbg/"

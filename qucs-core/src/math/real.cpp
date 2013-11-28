@@ -112,9 +112,9 @@ nr_double_t norm (const nr_double_t r) {
    \return Modulus of r 	 
    \todo Why not inline 	 
 */ 	 
-nr_double_t abs (const nr_double_t r) { 	 
-  return fabs (r); 	 
-}
+// nr_double_t abs (const nr_double_t r) { 	 
+//   return fabs (r); 	 
+// }
  	 
 /*!\brief Conjugate of real number
 

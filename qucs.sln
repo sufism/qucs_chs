@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucslib", "qucs-lib\qucslib.vcproj", "{1ED97E32-2EEC-47E3-B977-62D6BB5548A1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucs", "-qucs\qucs.vcproj", "{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucs", "qucs\qucs.vcproj", "{A3B41815-DC59-44D3-A3CE-1985CAD1DC41}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46AD938F-3069-4344-883C-5F0BCC9FA8EF} = {46AD938F-3069-4344-883C-5F0BCC9FA8EF}
 		{2035B1A8-0149-408C-8048-4DC9ECC99DF6} = {2035B1A8-0149-408C-8048-4DC9ECC99DF6}
@@ -32,23 +32,23 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdialogs", "qucs\dialogs\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpaintings", "qucs\paintings\libpaintings.vcproj", "{46AD938F-3069-4344-883C-5F0BCC9FA8EF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucsator", "-qucs-core\src\qucsator.vcproj", "{9316525C-7360-4BC5-AD5C-7153BAA1159B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucsator", "qucs-core\src\qucsator.vcproj", "{9316525C-7360-4BC5-AD5C-7153BAA1159B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libqucsator", "-qucs-core\src\libqucsator.vcproj", "{491DC8F2-C9E5-4961-9C59-55F62D45D8A0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libqucsator", "qucs-core\src\libqucsator.vcproj", "{491DC8F2-C9E5-4961-9C59-55F62D45D8A0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcomponent", "-qucs-core\src\components\libcomponent.vcproj", "{FCEE2B1B-B376-4DF7-96E1-48D74F72CE73}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcomponent", "qucs-core\src\components\libcomponent.vcproj", "{FCEE2B1B-B376-4DF7-96E1-48D74F72CE73}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucsconv", "-qucs-core\src\converter\qucsconv.vcproj", "{41BE1175-4321-4E62-952E-25C3D221C10C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qucsconv", "qucs-core\src\converter\qucsconv.vcproj", "{41BE1175-4321-4E62-952E-25C3D221C10C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libqucsmath", "-qucs-core\src\math\libqucsmath.vcproj", "{67855FE1-C9DE-428C-A27C-B84AA01C6F89}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libqucsmath", "qucs-core\src\math\libqucsmath.vcproj", "{67855FE1-C9DE-428C-A27C-B84AA01C6F89}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdevices", "-qucs-core\src\components\devices\libdevices.vcproj", "{505814C0-5AA0-4766-9033-2C7B6BA0E6FD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdevices", "qucs-core\src\components\devices\libdevices.vcproj", "{505814C0-5AA0-4766-9033-2C7B6BA0E6FD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdigital", "-qucs-core\src\components\digital\libdigital.vcproj", "{36A03833-F2BD-46C6-8354-8CD31A1AB541}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdigital", "qucs-core\src\components\digital\libdigital.vcproj", "{36A03833-F2BD-46C6-8354-8CD31A1AB541}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmicrostrip", "-qucs-core\src\components\microstrip\libmicrostrip.vcproj", "{AC24BF3F-9886-4BAB-961B-7A627A71FE6D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmicrostrip", "qucs-core\src\components\microstrip\libmicrostrip.vcproj", "{AC24BF3F-9886-4BAB-961B-7A627A71FE6D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libverilog", "--qucs-core\src\components\verilog\libverilog.vcproj", "{9B2AF1AF-E21E-492D-939D-E63211C33F12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libverilog", "qucs-core\src\components\verilog\libverilog.vcproj", "{9B2AF1AF-E21E-492D-939D-E63211C33F12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

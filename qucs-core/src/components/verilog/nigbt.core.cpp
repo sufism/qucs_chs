@@ -16,6 +16,10 @@
 #include "component.h"
 #include "device.h"
 #include "nigbt.core.h"
+inline double atanh(double x )
+{
+	return (log(1+x) - log(1-x))/2;
+}
 
 #ifndef CIR_nigbt
 #define CIR_nigbt -1

@@ -11,6 +11,10 @@
 #include <stdio.h>
 #include "gatedDlatch.analogfunction.h"
 #include <math.h>
+inline double atanh(double x )
+{
+	return (log(1+x) - log(1-x))/2;
+}
 
 /* math functions and appropriate derivatives */
 inline double _cos(double arg)             { return  cos(arg); }

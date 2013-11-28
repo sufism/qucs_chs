@@ -67,8 +67,112 @@
 
 :nr_double_t这个定义找了半天找不着，网上也没有查到。最后只好自己定义了
 方案：在config.h中加一句typedef double nr_double_t;
+为社么要定义成double?因为configure中有这么几行：
+cat >>confdefs.h <<_ACEOF
+#define SIZEOF_LONG_DOUBLE $ac_cv_sizeof_long_double
+_ACEOF
+
+
+     double_size=$ac_cv_sizeof_long_double
+     ;;
+   float)
+     double_type="float"
+     double_size=4
+     ;;
+   *)
+     double_type="none"
+     double_size=0
+     ;;
+   esac
+else
+  double_type="double"; double_size=8
+fi
+
+if test "$double_type" = none; then
+  as_fn_error $? "valid types are double, float and ldouble." "$LINENO" 5
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define nr_double_t $double_type
+_ACEOF
+
+
 
 1>e:\test\qucs-0.0.17\qucs-core\src\converter\touchstone_producer.cpp(26) : fatal error C1083: 无法打开包括文件:“config.h”: No such file or directory
 
 :这个仿佛是因为包含路径里面少一级
 方案：原有的包含路径无论最上层是哪一层，都在这一层后面再加一个/..
+
+
+1>NR_xxx找不到...诸如此类
+方案：在config.h中加一句#define NR_DOUBLE_SIZE 8
+
+1>e:\test\qucs-0.0.17\qucs-core\src\eqnsys.cpp(872) : error C2653: “std”: 不是类或命名空间名称
+1>        e:\test\qucs-0.0.17\qucs-core\src\eqnsys.cpp(933): 参见对正在编译的函数 模板 实例化“nr_type_t cond_conj<nr_type_t>(nr_type_t)”的引用
+1>        with
+1>        [
+1>            nr_type_t=nr_complex_t
+1>        ]
+1>        e:\test\qucs-0.0.17\qucs-core\src\eqnsys.cpp(886): 编译类 模板 成员函数“void eqnsys<nr_type_t>::factorize_qrh(void)”时
+1>        with
+1>        [
+1>            nr_type_t=nr_complex_t
+1>        ]
+1>        e:\test\qucs-0.0.17\qucs-core\src\eqnsys.cpp(185): 编译类 模板 成员函数“void eqnsys<nr_type_t>::solve_inverse(void)”时
+1>        with
+1>        [
+1>            nr_type_t=nr_complex_t
+1>        ]
+1>        e:\test\qucs-0.0.17\qucs-core\src\eqnsys.cpp(53): 编译类 模板 成员函数“eqnsys<nr_type_t>::eqnsys(void)”时
+1>        with
+1>        [
+1>            nr_type_t=nr_complex_t
+1>        ]
+1>        e:\test\qucs-0.0.17\qucs-core\src\hbsolver.cpp(649): 参见对正在编译的类 模板 实例化“eqnsys<nr_type_t>”的引用
+1>        with
+1>        [
+1>            nr_type_t=nr_complex_t
+1>        ]
+
+:  引起问题的是return std::tr1::conj(t);这句。系统中确实有std::tr1::这个命名空间，但是在这个命名空间里面没有conj这个函数。qucs的一些文件里面定义了conj函数，却没有用到命名空间。
+方案：先不管会引起什么问题，把std::tr1::给注释掉吧
+
+1>e:\test\qucs-0.0.17\qucs-core\src\matvec.cpp(149) : error C3861: “index”: 找不到标识符
+
+:这个问题是由于在compat.h中有这么一句:
+#if !HAVE_STRCHR
+# define strchr  index
+# define strrchr rindex
+#endif
+方案：由于vc中有strchr这个函数，在工程中加入HAVE_STRCHR宏
+
+2>e:\test\qucs-0.0.17\qucs-core\src\components\verilog\andor4x2.analogfunction.cpp(34) : error C3861: “atanh”: 找不到标识符
+
+:atanh在c++11中才作为标准函数，所以vs2008的math.h中没有这个函数，到2013里面才有
+方案：自己定义一个
+inline double atanh(double x )
+{
+	return (log(1+x) - log(1-x))/2;
+}
+
+1>e:\test\qucs-0.0.17\qucs-core\src\math\real.cpp(115) : error C2084: 函数“double abs(double)”已有主体
+1>        c:\program files\microsoft visual studio 9.0\vc\include\math.h(487) : 参见“abs”的前一个定义
+
+:我们把nr_double_t定义为double,于是出了这个问题
+方案：把这个函数注释掉
+
+1>module.obj : error LNK2019: 无法解析的外部符号 "public: __thiscall bsim3v34nMOS::bsim3v34nMOS(void)" (??0bsim3v34nMOS@@QAE@XZ)，该符号在函数 "public: static class circuit * __cdecl bsim3v34nMOS::create(void)" (?create@bsim3v34nMOS@@SAPAVcircuit@@XZ) 中被引用
+1>module.obj : error LNK2001: 无法解析的外部符号 "public: static struct define_t bsim3v34nMOS::cirdef" (?cirdef@bsim3v34nMOS@@2Udefine_t@@A)
+1>module.obj : error LNK2019: 无法解析的外部符号 "public: __thiscall bsim3v34pMOS::bsim3v34pMOS(void)" (??0bsim3v34pMOS@@QAE@XZ)，该符号在函数 "public: static class circuit * __cdecl bsim3v34pMOS::create(void)" (?create@bsim3v34pMOS@@SAPAVcircuit@@XZ) 中被引用
+1>module.obj : error LNK2001: 无法解析的外部符号 "public: static struct define_t bsim3v34pMOS::cirdef" (?cirdef@bsim3v34pMOS@@2Udefine_t@@A)
+1>module.obj : error LNK2019: 无法解析的外部符号 "public: __thiscall bsim4v30nMOS::bsim4v30nMOS(void)" (??0bsim4v30nMOS@@QAE@XZ)，该符号在函数 "public: static class circuit * __cdecl bsim4v30nMOS::create(void)" (?create@bsim4v30nMOS@@SAPAVcircuit@@XZ) 中被引用
+1>module.obj : error LNK2001: 无法解析的外部符号 "public: static struct define_t bsim4v30nMOS::cirdef" (?cirdef@bsim4v30nMOS@@2Udefine_t@@A)
+1>module.obj : error LNK2019: 无法解析的外部符号 "public: __thiscall bsim4v30pMOS::bsim4v30pMOS(void)" (??0bsim4v30pMOS@@QAE@XZ)，该符号在函数 "public: static class circuit * __cdecl bsim4v30pMOS::create(void)" (?create@bsim4v30pMOS@@SAPAVcircuit@@XZ) 中被引用
+1>module.obj : error LNK2001: 无法解析的外部符号 "public: static struct define_t bsim4v30pMOS::cirdef" (?cirdef@bsim4v30pMOS@@2Udefine_t@@A)
+1>module.obj : error LNK2019: 无法解析的外部符号 "public: __thiscall hicumL0V1p3::hicumL0V1p3(void)" (??0hicumL0V1p3@@QAE@XZ)，该符号在函数 "public: static class circuit * __cdecl hicumL0V1p3::create(void)" (?create@hicumL0V1p3@@SAPAVcircuit@@XZ) 中被引用
+1>module.obj : error LNK2001: 无法解析的外部符号 "public: static struct define_t hicumL0V1p3::cirdef" (?cirdef@hicumL0V1p3@@2Udefine_t@@A)
+1>module.obj : error LNK2019: 无法解析的外部符号 "public: __thiscall hicumL2V2p31n::hicumL2V2p31n(void)" (??0hicumL2V2p31n@@QAE@XZ)，该符号在函数 "public: static class circuit * __cdecl hicumL2V2p31n::create(void)" (?create@hicumL2V2p31n@@SAPAVcircuit@@XZ) 中被引用
+1>module.obj : error LNK2001: 无法解析的外部符号 "public: static struct define_t hicumL2V2p31n::cirdef" (?cirdef@hicumL2V2p31n@@2Udefine_t@@A)
+
+方案：在libverilog中加入bsim3v34nMOS.core.cpp bsim3v34nMOS.analogfunction.cpp等
+qucs也报类似的错，方法是在libcomponents中加入bsim3v34nMOS.core.cpp等

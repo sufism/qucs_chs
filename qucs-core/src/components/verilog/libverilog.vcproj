@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..,../..,../../..,../../../..,../devices,../../math"
+				AdditionalIncludeDirectories="..;../..;../../..;../../../..;../../../../qucs;../devices;../../math;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGUI&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;DEBUG"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Dbg/libverilog.pch"
@@ -340,6 +340,30 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\bsim3v34nMOS.core.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim3v34pMOS.core.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim4v30nMOS.analogfunction.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim4v30nMOS.core.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim4v30pMOS.analogfunction.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim4v30pMOS.core.cpp"
+			>
 		</File>
 		<File
 			RelativePath="comp_1bit.analogfunction.cpp"
@@ -1222,6 +1246,10 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath=".\hicumL0V1p3.core.cpp"
+			>
+		</File>
+		<File
 			RelativePath="hicumL2V2p1.analogfunction.cpp"
 			>
 			<FileConfiguration
@@ -1352,6 +1380,10 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\hicumL2V2p31n.core.cpp"
+			>
 		</File>
 		<File
 			RelativePath="hpribin4bit.analogfunction.cpp"

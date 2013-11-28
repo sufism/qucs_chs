@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..,../..,$(QTDIR)/include,$(QTDIR)\include\QtCore,$(QTDIR)\include\QtGUI,$(QTDIR)\include\Qt,$(QTDIR)\include\Qt3Support"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;DEBUG;QT3_SUPPORT"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;DEBUG;QT3_SUPPORT;HAVE_STRCHR"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Dbg/libcomponents.pch"
 				AssemblerListingLocation=".\Dbg/"
@@ -494,6 +494,22 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\bsim3v34nMOS.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim3v34pMOS.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim4v30nMOS.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\bsim4v30pMOS.cpp"
+			>
 		</File>
 		<File
 			RelativePath="capacitor.cpp"
@@ -1662,6 +1678,10 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath=".\hicumL2V2p31n.cpp"
+			>
 		</File>
 		<File
 			RelativePath="hpribin4bit.cpp"

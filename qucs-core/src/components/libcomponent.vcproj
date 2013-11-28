@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..,../..,../math,../../.."
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;DEBUG"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;DEBUG;HAVE_STRCHR"
 				RuntimeLibrary="3"
 				PrecompiledHeaderFile=".\Dbg/libcomponent.pch"
 				AssemblerListingLocation=".\Dbg/"
