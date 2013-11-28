@@ -27,7 +27,7 @@
 1>LINK : fatal error LNK1104: 无法打开文件“qt-mt3.lib”
 
 :这个貌似是qt3里面的库？
-方案：将工程设置中qt-mt3.lib替换成 QtCore4.lib QtGui.lib。另外由于编译出的qt库是分Debug和Release版的，在Debug版中依赖库应该是qtmaind.lib QtCored4.lib QtGuid4.lib
+方案：将工程设置中qt-mt3.lib替换成 QtCore4.lib QtGui4.lib。另外由于编译出的qt库是分Debug和Release版的，在Debug版中依赖库应该是qtmaind.lib QtCored4.lib QtGuid4.lib
 
 >qf_poly (qf_double_t, qf_double_t, qf_double_t, unsigned)定义找不到之类的错误
 

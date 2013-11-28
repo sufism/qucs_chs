@@ -46,8 +46,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories=".,..,../..,../math"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0"
+				AdditionalIncludeDirectories=".,..,../..,../../..,../math"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT3_SUPPORT;HAVE_STRCHR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -72,7 +72,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libqucsator.lib libqucsmath.lib"
-				OutputFile=".\Opt/qucsconv.exe"
+				OutputFile="$(SolutionDir)\Opt/qucsconv.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../Opt,../math/Opt"
@@ -160,7 +160,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libqucsator.lib libqucsmath.lib"
-				OutputFile=".\Dbg/qucsconv.exe"
+				OutputFile="$(SolutionDir)\Dbg/qucsconv.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="../Dbg,../math/Dbg"

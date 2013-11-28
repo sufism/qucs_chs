@@ -70,7 +70,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib"
-				OutputFile=".\Dbg/qucslib.exe"
+				OutputFile="$(SolutionDir)\Dbg/qucslib.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="C:\Qt\4.6.2/lib"
@@ -135,8 +135,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories=".,..,C:\Qt\4.6.2/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;QT_NO_DEBUG"
+				AdditionalIncludeDirectories=".;..;C:\Qt\4.6.2/include;C:\Qt\4.6.2\include\QtGui;C:\Qt\4.6.2\include\QtCore"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;QT_NO_DEBUG;QT3_SUPPORT;HAVE_STRCHR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -160,8 +160,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="qtmain.lib qt-mt3.lib"
-				OutputFile=".\Opt/qucslib.exe"
+				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib"
+				OutputFile="$(SolutionDir)\Opt/qucslib.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="C:\Qt\4.6.2/lib"

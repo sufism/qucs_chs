@@ -70,7 +70,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libcomponents.lib libdiagrams.lib libpaintings.lib libdialogs.lib qtmaind.lib QtCored4.lib QtGuid4.lib Qt3Supportd4.lib"
-				OutputFile=".\Dbg/qucs.exe"
+				OutputFile="$(SolutionDir)\Dbg/qucs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="components/Dbg,diagrams/Dbg,paintings/Dbg,dialogs/Dbg,$(QTDIR)/lib"
@@ -135,8 +135,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories=".,..,$(QTDIR)/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;QT_NO_DEBUG"
+				AdditionalIncludeDirectories=".,..,$(QTDIR)/include,$(QTDIR)/include/QtGUI,$(QTDIR)/include/QTCore,,$(QTDIR)\include\Qt,$(QTDIR)\include\Qt3Support"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;QT_NO_DEBUG;QT3_SUPPORT;HAVE_STRCHR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -160,8 +160,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcomponents.lib libdiagrams.lib libpaintings.lib libdialogs.lib qtmain.lib qt-mt3.lib"
-				OutputFile=".\Opt/qucs.exe"
+				AdditionalDependencies="libcomponents.lib libdiagrams.lib libpaintings.lib libdialogs.lib qtmain.lib QtCore4.lib QtGui4.lib Qt3Support4.lib"
+				OutputFile="$(SolutionDir)\Opt/qucs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="components/Opt,diagrams/Opt,paintings/Opt,dialogs/Opt,$(QTDIR)/lib"

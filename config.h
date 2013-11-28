@@ -26,7 +26,11 @@ typedef short nr_int16_t;
 #pragma warning(disable:4996)
 
 /* Where the binary files go. */
-#define BINARYDIR "/usr/local/bin/"
+#ifdef _DEBUG
+#define BINARYDIR "E:/test/qucs-0.0.17/Dbg/"/*"/usr/local/bin/"*/
+#else
+#define BINARYDIR "E:/test/qucs-0.0.17/Opt/"/*"/usr/local/bin/"*/
+#endif
 
 /* Where the data files go. */
 #define BITMAPDIR "/usr/local/share/qucs/bitmaps/"

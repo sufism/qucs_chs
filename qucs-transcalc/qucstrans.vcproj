@@ -46,8 +46,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories=".,..,C:\Qt\4.6.2/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;QT_NO_DEBUG"
+				AdditionalIncludeDirectories=".;..;C:\Qt\4.6.2/include;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGUI&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT_THREAD_SUPPORT;_REENTRANT;UNICODE;QT_DLL;QT_NO_DEBUG;QT3_SUPPORT;HAVE_STRCHR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -71,8 +71,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libtranscalc.lib qtmain.lib qt-mt3.lib"
-				OutputFile=".\Opt/qucstrans.exe"
+				AdditionalDependencies="libtranscalc.lib qtmain.lib QtCore4.lib QtGui4.lib"
+				OutputFile="$(SolutionDir)\Opt/qucstrans.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./Opt,C:\Qt\4.6.2/lib"
@@ -161,7 +161,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libtranscalc.lib qtmaind.lib QtCored4.lib QtGuid4.lib"
-				OutputFile=".\Dbg/qucstrans.exe"
+				OutputFile="$(SolutionDir)\Dbg/qucstrans.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="./Dbg,C:\Qt\4.6.2/lib"

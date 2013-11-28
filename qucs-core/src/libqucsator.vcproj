@@ -44,7 +44,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..,../..,math"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT3_SUPPORT;HAVE_STRCHR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

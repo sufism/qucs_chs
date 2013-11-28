@@ -70,7 +70,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libqucsator.lib libcomponent.lib libmicrostrip.lib libdevices.lib libdigital.lib libverilog.lib libqucsmath.lib"
-				OutputFile=".\Dbg/qucsator.exe"
+				OutputFile="$(SolutionDir)\Dbg/qucsator.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="components/Dbg;components/microstrip/Dbg;components/devices/Dbg;components/digital/Dbg;components/verilog/Dbg;math/Dbg;./Dbg;../../qucs/Components/Dbg"
@@ -135,8 +135,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories=".,..,components,math"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0"
+				AdditionalIncludeDirectories=".,..,../..,components,math"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;__MINGW32__;HAVE_CONFIG_H;__STDC__=0;QT3_SUPPORT;HAVE_STRCHR"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -161,7 +161,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libqucsator.lib libcomponent.lib libmicrostrip.lib libdevices.lib libdigital.lib libverilog.lib libqucsmath.lib"
-				OutputFile=".\Opt/qucsator.exe"
+				OutputFile="$(SolutionDir)\Opt/qucsator.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="components/Opt,components/microstrip/Opt,components/devices/Opt,components/digital/Opt,components/verilog/Opt,math/Opt,./Opt"
