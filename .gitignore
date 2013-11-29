@@ -2,6 +2,10 @@
 *.moc.o
 *.moc.cpp
 *.o
+*.obj
+*/*.obj
+*/*/*.obj
+*/*/*/*.obj
 Makefile.in
 Makefile
 .deps

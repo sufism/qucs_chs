@@ -33,13 +33,13 @@ typedef short nr_int16_t;
 #endif
 
 /* Where the data files go. */
-#define BITMAPDIR "/usr/local/share/qucs/bitmaps/"
+#define BITMAPDIR "E:/test/qucs-0.0.17/qucs/bitmaps/"
 
 /* Define if debug output should be supported. */
 #define DEBUG 1
 
 /* Where the documentation files go. */
-#define DOCDIR "/usr/local/share/qucs/docs/"
+#define DOCDIR "E:/test/qucs-0.0.17/qucs-help/docs/"
 
 /* Define to 1 if you have the <ieeefp.h> header file. */
 /* #undef HAVE_IEEEFP_H */
@@ -84,7 +84,7 @@ typedef short nr_int16_t;
 #define LANGUAGEDIR "/usr/local/share/qucs/lang/"
 
 /* Where the component library files go. */
-#define LIBRARYDIR "/usr/local/share/qucs/library/"
+#define LIBRARYDIR "E:/test/qucs-0.0.17/qucs-lib/library/"
 
 /* Define if debug code should be suppressed. */
 /* #undef NDEBUG */
